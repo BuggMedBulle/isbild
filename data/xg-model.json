@@ -1,0 +1,95 @@
+{
+  "name": "Isbild xG v0.1 \u00b7 experimentell",
+  "features": [
+    "distance / 10",
+    "distance\u00b2 / 1000",
+    "angle / (pi/2)",
+    "lateral distance\u00b2 / 1000",
+    "same-team rebound within 3s"
+  ],
+  "mean": [
+    1.0867761044325783,
+    0.15241154216401456,
+    0.3526717350984834,
+    0.041669569232815125,
+    0.03983844317973196
+  ],
+  "scale": [
+    0.5856902939903409,
+    0.187066697583468,
+    0.2215402679759059,
+    0.04779794393712286,
+    0.19557950205669503
+  ],
+  "coefficients": [
+    -0.5403079529518304,
+    -0.07532892333529885,
+    -0.1322314127800504,
+    -0.35648697197338647,
+    0.20375068848654176
+  ],
+  "intercept": -2.8889720410666344,
+  "trainedAt": "2026-10-04T18:59:36.460950+00:00",
+  "validation": {
+    "trainingSeason": "2025/26",
+    "trainingGames": 80,
+    "testGames": 20,
+    "trainingShots": 5447,
+    "testShots": 1337,
+    "trainingGoals": 389,
+    "testGoals": 104,
+    "brier": 0.06735488034308193,
+    "baselineBrier": 0.07177599766015538,
+    "logLoss": 0.24580393861341804,
+    "baselineLogLoss": 0.2736266075925016,
+    "auc": 0.7405054900492857,
+    "predictedTestGoals": 97.28989217964194,
+    "trainDateRange": [
+      "2025-09-13",
+      "2026-02-05"
+    ],
+    "testDateRange": [
+      "2026-02-07",
+      "2026-03-14"
+    ],
+    "split": "Earlier games for training; later games held out. Current 2026/27 games excluded.",
+    "calibration": [
+      {
+        "range": [
+          0,
+          0.05
+        ],
+        "shots": 546,
+        "predicted": 0.026980897904093477,
+        "actual": 0.023809523809523808
+      },
+      {
+        "range": [
+          0.05,
+          0.1
+        ],
+        "shots": 437,
+        "predicted": 0.07037340962809303,
+        "actual": 0.07322654462242563
+      },
+      {
+        "range": [
+          0.1,
+          0.2
+        ],
+        "shots": 308,
+        "predicted": 0.12628068673170492,
+        "actual": 0.14285714285714285
+      },
+      {
+        "range": [
+          0.2,
+          1
+        ],
+        "shots": 46,
+        "predicted": 0.2806671826775027,
+        "actual": 0.32608695652173914
+      }
+    ]
+  }
+}
