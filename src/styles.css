@@ -53,13 +53,13 @@
 
 /* Dark palette keeps light-theme fallbacks and original club emblem colors. */
 @custom-variant dark (&:where(.dark, .dark *));
-html.dark{color-scheme:dark;--canvas:#0c1c25;--surface:#132833;--surface-raised:#1c3441;--surface-accent:#153735;--surface-warm:#382f21;--surface-danger:#3b2528;--outline:#304955;--ink-strong:#e2eef3;--ink-secondary:#b6c9d4;--ink-muted:#9bb2bf;--ink-accent:#77dbc9;--ink-warm:#e6be7e;--ink-danger:#ffb0a0;--plot-own:#51bcad;--plot-actual:#a1b9c7;--background:#0c1c25;--foreground:#e2eef3;--card:#132833;--card-foreground:#e2eef3;--popover:#1c3441;--popover-foreground:#e2eef3;--primary:#51bcad;--primary-foreground:#0c2427;--secondary:#1c3441;--secondary-foreground:#e2eef3;--muted:#1c3441;--muted-foreground:#a9bfcc;--accent:#214441;--accent-foreground:#b1f4e4;--border:#304955;--input:#304955;--ring:#77dbc9;--destructive:#ffb0a0}
-html.dark .topbar{background:#10232f;border-bottom:1px solid var(--outline)}
+html.dark{color-scheme:dark;--canvas:#141414;--surface:#1e1e1e;--surface-raised:#292929;--surface-accent:#262626;--surface-warm:#382f21;--surface-danger:#3b2528;--outline:#3c3c3c;--ink-strong:#eeeeee;--ink-secondary:#c6c6c6;--ink-muted:#aaaaaa;--ink-accent:#77dbc9;--ink-warm:#e6be7e;--ink-danger:#ffb0a0;--plot-own:#51bcad;--plot-actual:#b7b7b7;--background:#141414;--foreground:#eeeeee;--card:#1e1e1e;--card-foreground:#eeeeee;--popover:#292929;--popover-foreground:#eeeeee;--primary:#51bcad;--primary-foreground:#151515;--secondary:#292929;--secondary-foreground:#eeeeee;--muted:#292929;--muted-foreground:#b5b5b5;--accent:#333333;--accent-foreground:#eeeeee;--border:#3c3c3c;--input:#3c3c3c;--ring:#77dbc9;--destructive:#ffb0a0}
+html.dark .topbar{background:#191919;border-bottom:1px solid var(--outline)}
 .theme-toggle{width:38px;height:38px;display:grid;place-items:center;border:1px solid #426673;border-radius:7px;color:#c7dbe5;background:transparent;flex-shrink:0}
 .theme-toggle:hover{background:#21434f;color:white}
-html.dark .button.primary{color:#0c2427}
-html.dark .recharts-cartesian-grid line{stroke:#304955}
-html.dark .recharts-text{fill:#a9bfcc}
+html.dark .button.primary{color:#151515}
+html.dark .recharts-cartesian-grid line{stroke:#3c3c3c}
+html.dark .recharts-text{fill:#b5b5b5}
 html.dark .recharts-tooltip-wrapper .recharts-default-tooltip{background:var(--surface-raised)!important;border-color:var(--outline)!important;color:var(--ink-strong)!important}
 html.dark .recharts-tooltip-label{color:var(--ink-strong)!important}
 html.dark .scatter>svg>rect{fill:var(--surface-raised)}
@@ -67,8 +67,11 @@ html.dark .scatter>svg>g>line{stroke:var(--outline)}
 html.dark .scatter-point circle{fill:var(--surface-raised);stroke:var(--outline)}
 html.dark .scatter-point:hover circle{stroke:var(--ink-accent)}
 html.dark .club-fallback{background:var(--surface-raised);color:var(--ink-secondary)}
-html.dark .emblem-disc{background:#eaf1f4}
+html.dark .emblem-disc{background:#eeeeee}
 html.dark .recharts-line-curve[stroke="#087e83"]{stroke:var(--plot-own)}
 html.dark .recharts-line-curve[stroke="#bc7140"]{stroke:#d89460}
 html.dark .recharts-line-dots circle[stroke="#087e83"]{stroke:var(--plot-own);fill:var(--plot-own)}
 @media(max-width:760px){.header-right{gap:9px}.theme-toggle{width:34px;height:34px}}
+
+html.dark .theme-toggle{border-color:var(--outline);color:var(--ink-secondary)}
+html.dark .theme-toggle:hover{background:var(--surface-raised);color:var(--ink-strong)}
