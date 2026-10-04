@@ -1,0 +1,7 @@
+import {perspective,sumStats,type Game,type Scope} from './hockey.ts';
+export function teamGames(games:Game[],team:string,range:string,venue:string){let rows=games.filter(g=>(g.home===team||g.away===team)&&(venue==='all'||(venue==='home'?g.home===team:g.away===team))).sort((a,b)=>a.date.localeCompare(b.date)||a.id.localeCompare(b.id));if(range!=='all')rows=rows.slice(-Number(range));return rows;}
+export function aggregate(games:Game[],team:string,scope:Scope){return sumStats(games.flatMap(g=>{const s=perspective(g,team,scope);return s?[s]:[]}));}
+export function previousWindow(games:Game[],team:string,range:string,venue:string){if(range==='all')return [];const rows=teamGames(games,team,'all',venue),size=Number(range);return rows.slice(Math.max(0,rows.length-2*size),Math.max(0,rows.length-size));}
+export function ranking(rows:{team:string;value:number|null}[],team:string){const valid=rows.filter(r=>r.value!==null).sort((a,b)=>b.value!-a.value!);const own=valid.find(r=>r.team===team);return own?1+valid.filter(r=>r.value!>own.value!+1e-9).length:null;}
+export function headline(s:ReturnType<typeof sumStats>){const gap=(s.gf-s.ga)-(s.xgf-s.xga);if(!s.n)return 'Analysunderlag saknas';if(gap<-.75)return 'Målutfallet är svagare än chansbilden.';if(gap>.75)return 'Målutfallet är starkare än chansbilden.';return 'Chansbild och målutfall ligger nära varandra.';}
+export function barWidths(a:number,b:number){const sum=a+b;return sum>0?[a/sum*100,b/sum*100]:[50,50];}
