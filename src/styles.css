@@ -75,3 +75,5 @@ html.dark .recharts-line-dots circle[stroke="#087e83"]{stroke:var(--plot-own);fi
 
 html.dark .theme-toggle{border-color:var(--outline);color:var(--ink-secondary)}
 html.dark .theme-toggle:hover{background:var(--surface-raised);color:var(--ink-strong)}
+
+.trend-tooltip{max-width:320px;padding:14px 16px;background:var(--surface-raised,#fff);color:var(--ink-strong,#24404f);border:1px solid var(--outline,#dce5eb);border-radius:10px;box-shadow:0 4px 18px #0002;font-size:12px;line-height:1.6}.trend-tooltip>div{margin:3px 0 8px}.trend-tooltip small{display:block;color:var(--ink-muted,#738d9a);max-width:230px}.trend-tooltip p{margin-top:5px}.trend-for{color:var(--ink-accent,#087e83)}.trend-against{color:var(--ink-warm,#bc7140)}
