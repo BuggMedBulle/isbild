@@ -1,1 +1,66 @@
-{"accepted": false, "pending": true}
+{
+  "trainingSeason": "2025/26",
+  "trainingGames": 290,
+  "testGames": 73,
+  "trainingShots": 19836,
+  "testShots": 5023,
+  "trainingGoals": 1408,
+  "testGoals": 358,
+  "brier": 0.06325315482903278,
+  "baselineBrier": 0.06619251317648145,
+  "logLoss": 0.23701091831229146,
+  "baselineLogLoss": 0.25691787538219146,
+  "auc": 0.712712640787512,
+  "predictedTestGoals": 352.6187017302314,
+  "trainDateRange": [
+    "2025-09-13",
+    "2026-02-05"
+  ],
+  "testDateRange": [
+    "2026-02-05",
+    "2026-03-14"
+  ],
+  "split": "Earlier games for training; later games held out. Current 2026/27 games excluded.",
+  "calibration": [
+    {
+      "range": [
+        0,
+        0.05
+      ],
+      "shots": 2379,
+      "predicted": 0.028262851702063937,
+      "actual": 0.030685161832702815
+    },
+    {
+      "range": [
+        0.05,
+        0.1
+      ],
+      "shots": 1357,
+      "predicted": 0.0713207635928491,
+      "actual": 0.06927044952100221
+    },
+    {
+      "range": [
+        0.1,
+        0.2
+      ],
+      "shots": 1153,
+      "predicted": 0.1321149692206489,
+      "actual": 0.1326973113616652
+    },
+    {
+      "range": [
+        0.2,
+        1
+      ],
+      "shots": 134,
+      "predicted": 0.27067568525460395,
+      "actual": 0.2835820895522388
+    }
+  ],
+  "previousModelLogLoss": 0.23807158049526592,
+  "previousModelBrier": 0.06343893392345686,
+  "comparisonCaveat": "Previous model used 100 sampled games across the season; its exposure to the new holdout differs. Candidate uses only the earlier 80 percent.",
+  "accepted": true
+}

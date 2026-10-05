@@ -1,5 +1,5 @@
 {
-  "name": "Isbild xG v0.1 \u00b7 experimentell",
+  "name": "Isbild xG v0.2 \u00b7 experimentell",
   "features": [
     "distance / 10",
     "distance\u00b2 / 1000",
@@ -8,48 +8,48 @@
     "same-team rebound within 3s"
   ],
   "mean": [
-    1.0867761044325783,
-    0.15241154216401456,
-    0.3526717350984834,
-    0.041669569232815125,
-    0.03983844317973196
+    1.0847095326514917,
+    0.15396361346387968,
+    0.34721010997224316,
+    0.040143843773986256,
+    0.04426295624117765
   ],
   "scale": [
-    0.5856902939903409,
-    0.187066697583468,
-    0.2215402679759059,
-    0.04779794393712286,
-    0.19557950205669503
+    0.6025291398876372,
+    0.2023658906092272,
+    0.22539736629411086,
+    0.04726289886243494,
+    0.20567874694771518
   ],
   "coefficients": [
-    -0.5403079529518304,
-    -0.07532892333529885,
-    -0.1322314127800504,
-    -0.35648697197338647,
-    0.20375068848654176
+    -0.85070666406976,
+    0.21574628151712313,
+    -0.10183219053635537,
+    -0.2676044541375278,
+    0.1778039304580334
   ],
-  "intercept": -2.8889720410666344,
-  "trainedAt": "2026-10-04T18:59:36.460950+00:00",
+  "intercept": -2.8908310870951057,
+  "trainedAt": "2026-10-05T18:39:07.694344+00:00",
   "validation": {
     "trainingSeason": "2025/26",
-    "trainingGames": 80,
-    "testGames": 20,
-    "trainingShots": 5447,
-    "testShots": 1337,
-    "trainingGoals": 389,
-    "testGoals": 104,
-    "brier": 0.06735488034308193,
-    "baselineBrier": 0.07177599766015538,
-    "logLoss": 0.24580393861341804,
-    "baselineLogLoss": 0.2736266075925016,
-    "auc": 0.7405054900492857,
-    "predictedTestGoals": 97.28989217964194,
+    "trainingGames": 290,
+    "testGames": 73,
+    "trainingShots": 19836,
+    "testShots": 5023,
+    "trainingGoals": 1408,
+    "testGoals": 358,
+    "brier": 0.06325315482903278,
+    "baselineBrier": 0.06619251317648145,
+    "logLoss": 0.23701091831229146,
+    "baselineLogLoss": 0.25691787538219146,
+    "auc": 0.712712640787512,
+    "predictedTestGoals": 352.6187017302314,
     "trainDateRange": [
       "2025-09-13",
       "2026-02-05"
     ],
     "testDateRange": [
-      "2026-02-07",
+      "2026-02-05",
       "2026-03-14"
     ],
     "split": "Earlier games for training; later games held out. Current 2026/27 games excluded.",
@@ -59,37 +59,41 @@
           0,
           0.05
         ],
-        "shots": 546,
-        "predicted": 0.026980897904093477,
-        "actual": 0.023809523809523808
+        "shots": 2379,
+        "predicted": 0.028262851702063937,
+        "actual": 0.030685161832702815
       },
       {
         "range": [
           0.05,
           0.1
         ],
-        "shots": 437,
-        "predicted": 0.07037340962809303,
-        "actual": 0.07322654462242563
+        "shots": 1357,
+        "predicted": 0.0713207635928491,
+        "actual": 0.06927044952100221
       },
       {
         "range": [
           0.1,
           0.2
         ],
-        "shots": 308,
-        "predicted": 0.12628068673170492,
-        "actual": 0.14285714285714285
+        "shots": 1153,
+        "predicted": 0.1321149692206489,
+        "actual": 0.1326973113616652
       },
       {
         "range": [
           0.2,
           1
         ],
-        "shots": 46,
-        "predicted": 0.2806671826775027,
-        "actual": 0.32608695652173914
+        "shots": 134,
+        "predicted": 0.27067568525460395,
+        "actual": 0.2835820895522388
       }
-    ]
+    ],
+    "previousModelLogLoss": 0.23807158049526592,
+    "previousModelBrier": 0.06343893392345686,
+    "comparisonCaveat": "Previous model used 100 sampled games across the season; its exposure to the new holdout differs. Candidate uses only the earlier 80 percent.",
+    "accepted": true
   }
 }
