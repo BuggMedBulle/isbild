@@ -16,3 +16,6 @@ export function parseSpecialTeams(pp:unknown,pk:unknown,games:Game[],range='all'
 export function validateLeague(rows:SpecialTeamRow[]){const sum=(k:keyof SpecialTeamRow)=>rows.reduce((n,r)=>n+Number(r[k]),0);for(const [a,b] of [['ppGoals','pkAgainst'],['ppAgainst','pkGoals'],['ppChances','pkChances'],['ppShots','pkShotsAgainst'],['ppSeconds','pkSeconds']] as const)if(sum(a)!==sum(b))throw Error(`PP/BP league totals disagree: ${a}`);}
 export const efficiency=(goals:number,chances:number)=>chances?goals/chances*100:null;
 export const per60=(value:number,time:number)=>time?value/time*3600:null;
+
+// PP scoring rate minus opponent scoring rate during our BP, in percentage points.
+export function specialTeamsNet(r:SpecialTeamRow){const pp=efficiency(r.ppGoals,r.ppChances),against=efficiency(r.pkAgainst,r.pkChances);return pp===null||against===null?null:pp-against;}
