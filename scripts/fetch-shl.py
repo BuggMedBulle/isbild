@@ -8,7 +8,7 @@ def schedule(season):
  return get('https://www.shl.se/api/sports-v2/game-schedule?seasonUuid='+season+'&seriesUuid=qQ9-bb0bzEWUk&gameTypeUuid=qQ9-af37Ti40B&gamePlace=all&played=all')['gameInfo']
 current=[g for g in schedule('ndcf81nlb3') if g['state']=='post-game']
 historical=sorted([g for g in schedule('xs4m9qupsi') if g['state']=='post-game'],key=lambda g:g['startDateTime'])
-selected=[historical[round(i*(len(historical)-1)/99)] for i in range(100)]
+selected=historical
 (root/'current-schedule.json').write_text(json.dumps(current));(root/'training-schedule.json').write_text(json.dumps(selected))
 def fetch(g):
  uid=g['uuid'];out=root/(uid+'.json')

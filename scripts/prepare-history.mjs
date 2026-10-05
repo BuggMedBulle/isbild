@@ -1,0 +1,6 @@
+import fs from 'node:fs';
+import {extractShots,probability,nameByCode} from '../lib/shl.ts';
+import {goalieStats} from '../lib/goalies.ts';
+const model=JSON.parse(fs.readFileSync('data/xg-model.json','utf8')),schedule=JSON.parse(fs.readFileSync('/tmp/isbild-data/training-schedule.json','utf8'));const games=[];let excludedGames=0,excludedCoordinates=0;
+for(const g of schedule){try{const events=JSON.parse(fs.readFileSync(`/tmp/isbild-data/${g.uuid}.json`,'utf8'));const valid=events.filter(e=>!['shot','goal'].includes(e.type)||(typeof e.locationX==='number'&&typeof e.locationY==='number'&&e.locationX>=-60&&e.locationX<=650&&Math.abs(e.locationY)<=170));excludedCoordinates+=events.length-valid.length;const shots=extractShots(valid).filter(s=>s.eligible).map(s=>({...s,xg:probability(s,model)}));games.push({id:g.uuid,date:g.startDateTime.slice(0,10),home:nameByCode[g.homeTeamInfo.code]||g.homeTeamInfo.names.full,away:nameByCode[g.awayTeamInfo.code]||g.awayTeamInfo.names.full,shots});}catch{excludedGames++;}}
+const data=goalieStats(games);fs.writeFileSync('data/goalie-history.json',JSON.stringify({season:'2025/26',model:model.name,games:games.length,excludedGames,excludedCoordinates,missing:data.missing,rows:data.rows})+'\n');console.log('Historical goalie games',games.length,'excluded',excludedGames);
