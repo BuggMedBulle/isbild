@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';
+import {distribution,chanceGroups,expectedOutcome,expectedTable,scoreContext,windowComparison,profile,opponents} from '../lib/advanced.ts';
+import {keeperMinutes} from '../lib/shl.ts';
+assert.deepEqual(distribution([.5,.5]),[.25,.5,.25]);assert.throws(()=>distribution([2]));
+const shot=(home,xg,seconds=10,rebound=false,outcome='saved')=>({id:String(seconds)+home,home,xg,seconds,period:1,rebound,outcome,eligible:true,emptyNet:false,x:100,y:0});
+const game={id:'g',date:'2026-10-01',home:'H',away:'A',resultHome:1,resultAway:0,overtime:false,stats:{all:{gf:1,ga:0,xgf:.5,xga:.5}},shots:[shot(true,.5),shot(false,.5,20)]};
+const p=expectedOutcome(game);assert(Math.abs(p.homeWin-.25)<1e-12);assert(Math.abs(p.draw-.5)<1e-12);assert(Math.abs(p.homePoints-1.5)<1e-12);assert(Math.abs(p.homePoints+p.awayPoints-3)<1e-12);
+const grouped=chanceGroups([shot(true,.5,10),shot(true,.8,11,true)]);assert.equal(grouped.length,1);assert(Math.abs(1-grouped[0].survival-.9)<1e-12);
+assert.equal(expectedOutcome({...game,shots:[]}),null);assert.equal(expectedOutcome({...game,shots:[shot(true,undefined)]}),null);assert.equal(expectedTable([game,{...game,shots:[]}]).missing,1);
+const goals=[{id:'goal',seconds:30,home:true}],context=scoreContext([{...game,goals,shots:[shot(true,.2,20),shot(false,.3,40)]}],'H');assert.equal(context.rows[0].xgf,.2);assert.equal(context.rows[1].xga,.3);assert.equal(scoreContext([game],'H').missing,1);
+assert.equal(windowComparison([game],'H','all','all').complete,false);assert.equal(profile([game],'H').unit,'per match');assert.equal(profile([{...game,stats:{all:{...game.stats.all,minutes:30}}}],'H').forRate,1);
+assert.equal(opponents([game],[game],'H')[0].reference.n,0);
+const keeper=(side,sec,entering,id)=>({type:'goalkeeper',period:1,time:`${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`,eventId:id,eventTeam:{place:side},isEntering:entering});assert.equal(keeperMinutes([keeper('home',0,true,1),keeper('away',0,true,2),keeper('away',600,false,3),keeper('away',660,true,4)]),59);
+const snapshot=JSON.parse(fs.readFileSync(new URL('../data/shl-2026.json',import.meta.url)));for(const g of snapshot.games){const o=expectedOutcome(g);assert(o);assert(Math.abs(o.homeWin+o.awayWin+o.draw-1)<1e-9);assert(Math.abs(o.homePoints+o.awayPoints-3)<1e-9);}console.log('PASS: exact goal distributions, rebound dependency, expected point conservation, missing data, pre-shot score state, non-overlapping windows and keeper time.');
