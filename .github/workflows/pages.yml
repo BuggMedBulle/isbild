@@ -51,6 +51,9 @@ jobs:
       - name: Refresh SHL snapshot
         if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.refresh_data || inputs.retrain_model))
         run: pnpm sync:shl
+      - name: Refresh official powerplay and boxplay
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.refresh_data || inputs.retrain_model))
+        run: pnpm sync:special-teams
       - name: Validate analysis
         run: pnpm test
       - name: Build static site
@@ -58,7 +61,7 @@ jobs:
       - name: Keep validated match data in repository
         if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.refresh_data || inputs.retrain_model))
         run: |
-          git add data/shl-2026.json public/data/shl-2026.json data/xg-model.json data/model-evaluation.json data/goalie-history.json
+          git add data/shl-2026.json public/data/shl-2026.json data/xg-model.json data/model-evaluation.json data/goalie-history.json data/special-teams.json public/data/special-teams.json
           if ! git diff --cached --quiet; then
             git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Update verified SHL match data'
             git push
