@@ -8,6 +8,10 @@ on:
         description: 'Fetch new SHL match events before publishing'
         type: boolean
         default: true
+      retrain_model:
+        description: 'Evaluate larger historical xG model and build goalie history'
+        type: boolean
+        default: false
   schedule:
     # 00:23 Sweden summer time, 23:23 winter time. Public standard runner.
     - cron: '23 22 * * *'
@@ -32,17 +36,29 @@ jobs:
         run: npm install --global pnpm@11.25.0
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - uses: actions/setup-python@v6
+        if: github.event_name == 'workflow_dispatch' && inputs.retrain_model
+        with:
+          python-version: '3.12'
+      - name: Evaluate historical model and goalkeepers
+        if: github.event_name == 'workflow_dispatch' && inputs.retrain_model
+        run: |
+          pip install numpy scikit-learn
+          python scripts/fetch-shl.py
+          node scripts/prepare-training.mjs
+          python scripts/train-xg.py
+          node scripts/prepare-history.mjs
       - name: Refresh SHL snapshot
-        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.refresh_data)
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.refresh_data || inputs.retrain_model))
         run: pnpm sync:shl
       - name: Validate analysis
         run: pnpm test
       - name: Build static site
         run: pnpm build
       - name: Keep validated match data in repository
-        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.refresh_data)
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.refresh_data || inputs.retrain_model))
         run: |
-          git add data/shl-2026.json public/data/shl-2026.json
+          git add data/shl-2026.json public/data/shl-2026.json data/xg-model.json data/model-evaluation.json data/goalie-history.json
           if ! git diff --cached --quiet; then
             git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Update verified SHL match data'
             git push
