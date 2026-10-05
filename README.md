@@ -93,3 +93,10 @@ den valda säsongen och modellen, oberoende av lagets senaste5/10-filter.
 Verkliga poäng och jämförelseplacering räknas på samma matcher. Poäng,
 målskillnad och gjorda mål används för jämförelseordningen; helt lika
 lag delar placering. Detta är ett scenario, inte statistiskt förväntade poäng.
+
+
+## Official powerplay and penalty killing
+
+The PP & BP view uses SHL’s public Statnet statistics API for season 2026/27 (ssgt `qa98unlbd6`). Run `pnpm sync:special-teams` after `pnpm sync:shl`. Both source tables must cover all 14 teams and agree with snapshot game counts. Percentages are checked against counts, and league-wide PP goals, opportunities, shots and seconds must equal opponents’ PK totals. A failed fetch or validation retains the prior snapshot. Scheduled updates publish both snapshots together.
+
+This view is full-season, all venues, using official source scope (including overtime and empty-net situations). It deliberately has no last-five or venue filters: the official API applies last-X before location, unlike the existing Isbild selection. Do not silently substitute one selection for another. Per-60 figures use actual PP/PK time; zero denominators are displayed as missing. xG by strength and five-on-five xG remain unavailable until strength is verified for every shot.
