@@ -93,3 +93,21 @@ html.dark .theme-toggle:hover{background:var(--surface-raised);color:var(--ink-s
 .primary-nav button{white-space:nowrap}.mobile-menu-toggle{display:none}.mobile-navigation{background:var(--surface,#fff);color:var(--ink-strong,#183441);border-color:var(--outline,#dce5eb);max-height:calc(100dvh - 32px);overflow-y:auto}.mobile-navigation nav{display:flex;flex-direction:column;gap:6px}.mobile-navigation nav button{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:12px 14px;border-radius:8px;text-align:left;font-size:16px;color:var(--ink-secondary,#395868)}.mobile-navigation nav button:hover,.mobile-navigation nav button.active{background:var(--surface-accent,#f1ecfa);color:var(--ink-accent,#7350b8)}.mobile-menu-close{position:absolute;right:16px;top:16px;display:grid;place-items:center;width:40px;height:40px;border-radius:6px}.mobile-navigation [data-slot=dialog-header]{padding-right:40px;text-align:left}
 @media(max-width:1050px){.topbar{height:65px;min-height:65px;flex-wrap:nowrap;gap:12px}.topbar .primary-nav{display:none}.header-right{gap:10px}.header-right .nav-method{display:none}.mobile-menu-toggle{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--outline,#426673);border-radius:7px;color:inherit;order:3}.topbar .brand{flex-shrink:0}.mobile-navigation{width:calc(100% - 32px);max-width:420px!important}}
 @media(min-width:1051px){.topbar{gap:28px}.primary-nav{gap:20px}.header-right{gap:14px}}
+
+/* Keep explanatory copy quieter than headings, values and table content. */
+:root{--ink-explainer:#66727d}
+html.dark{--ink-explainer:#a0a0a0}
+.hero-story p,.page-heading p,.league-intro p,.xg-table-intro p,
+.match-story p,.methodology p,.methodology dd,.limitations li,
+[data-slot=dialog-description]{font-size:12px;color:var(--ink-explainer);line-height:1.65}
+.performance-factors:not(.special-team-cards) p,.performance-caution,.performance-method p,
+.team-insights p,.match-expectation>p,.history-note p,
+.compare-insight p,.shot-detail p,.xg-position-story p,
+.inline-info p,.advanced-body p,
+.special-team-cards article:last-child p:nth-of-type(n+2){font-size:11px;color:var(--ink-explainer);line-height:1.65}
+.panel-heading p,.chart-note,.model-note,.match-source p,.evidence-note,
+.window-note,.league-table caption{color:var(--ink-explainer)}
+.hero-story p strong{color:var(--ink-strong,#254957)}
+@media(max-width:650px){
+ .hero-story p,.page-heading p,.league-intro p,.xg-table-intro p,.match-story p{font-size:11px}
+}
