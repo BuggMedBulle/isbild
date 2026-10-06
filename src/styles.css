@@ -95,7 +95,7 @@ html.dark .theme-toggle:hover{background:var(--surface-raised);color:var(--ink-s
 @media(min-width:1051px){.topbar{gap:28px}.primary-nav{gap:20px}.header-right{gap:14px}}
 
 /* Keep explanatory copy quieter than headings, values and table content. */
-:root{--ink-explainer:#66727d}
+:root{--ink-explainer:#626d77}
 html.dark{--ink-explainer:#a0a0a0}
 .hero-story p,.page-heading p,.league-intro p,.xg-table-intro p,
 .match-story p,.methodology p,.methodology dd,.limitations li,
