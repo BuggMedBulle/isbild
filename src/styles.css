@@ -111,3 +111,7 @@ html.dark{--ink-explainer:#a0a0a0}
 @media(max-width:650px){
  .hero-story p,.page-heading p,.league-intro p,.xg-table-intro p,.match-story p{font-size:11px}
 }
+
+/* Text wordmark until the custom logo is ready. */
+.brand{white-space:nowrap;font-size:27px;letter-spacing:-1.1px}
+@media(max-width:650px){.brand{font-size:24px;gap:8px}.brand-mark{width:28px;height:28px}}
