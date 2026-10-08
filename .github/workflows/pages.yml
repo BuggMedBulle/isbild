@@ -13,8 +13,12 @@ on:
         type: boolean
         default: false
   schedule:
-    # 00:23 Sweden summer time, 23:23 winter time. Public standard runner.
-    - cron: '23 22 * * *'
+    # After regular match nights, in Swedish local time including DST.
+    - cron: '30 22 * * 2,4,6'
+      timezone: 'Europe/Stockholm'
+    # Daily fallback for late games, rescheduled games and source updates.
+    - cron: '23 0 * * *'
+      timezone: 'Europe/Stockholm'
 permissions:
   contents: read
 concurrency:
