@@ -30,3 +30,13 @@ const shot=(outcome,xg,extra={})=>({player:'Test',home:true,eligible:true,emptyN
 const pr=playerMatchStats({home:'A',away:'B',shots:[shot('goal',.2),shot('saved',.1),shot('missed',.1),shot('blocked',0),shot('goal',.8,{period:4}),shot('goal',.8,{emptyNet:true}),shot('saved',.1,{eligible:false}),shot('blocked',0,{home:false}),shot('goal',.1,{player:'Okänd spelare'})]});
 assert.equal(pr.length,2);assert.deepEqual(pr[0],{name:'Test',team:'A',goals:1,sog:2,attempts:4,xg:.4,shooting:50});assert.equal(pr[1].shooting,null);
 console.log('PASS: weighted shooting efficiency, missing and zero shots, individual xG, team identity and match exclusions.');
+
+// League aggregation uses each club's latest matches without double counting.
+const {leaguePlayerStats}=await import('../lib/player-match.ts');
+const pg=(id,date,home,away,hs,as)=>({id,date,home,away,shots:[...hs.map(s=>({...s,home:true})),...as.map(s=>({...s,home:false}))]});
+const fixtures=[pg('one','2026-01-01','A','B',[shot('goal',.2)],[shot('saved',.1)]),pg('two','2026-01-02','C','A',[],[shot('saved',.3)]),pg('three','2026-01-03','B','C',[shot('goal',.5)],[])];
+const lp=leaguePlayerStats(fixtures);assert.equal(lp.length,2);
+const pa=lp.find(p=>p.team==='A');assert.equal(pa.matches,2);assert.equal(pa.goals,1);assert.equal(pa.sog,2);assert.equal(pa.xg,.5);assert.equal(pa.shooting,50);assert.equal(pa.finishing,.5);
+const playerLast=leaguePlayerStats(fixtures,'1');assert.equal(playerLast.find(p=>p.team==='A').goals,0);assert.equal(playerLast.find(p=>p.team==='A').xg,.3);assert.equal(playerLast.find(p=>p.team==='B').goals,1);
+assert.equal(leaguePlayerStats(fixtures,'all','home').find(p=>p.team==='A').matches,1);assert.equal(leaguePlayerStats(fixtures,'all','away').find(p=>p.team==='A').goals,0);assert.deepEqual(leaguePlayerStats([]),[]);
+console.log('PASS: league player aggregation, club-specific windows, venue filters, weighted efficiency and no duplicate games.');
