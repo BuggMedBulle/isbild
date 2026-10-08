@@ -224,3 +224,9 @@ html.dark{--ink-explainer:#a0a0a0}
 
 /* Space Mono is loaded with digits only: letters retain the existing UI font. */
 input,select,textarea{font-family:inherit}
+
+/* Five team metrics, with readable cards on smaller screens. */
+.metric-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+.player-match{margin:0 0 24px}.player-match-filter{padding:0 25px 18px;max-width:340px}.player-match-note,.player-match-method{margin:16px 25px;color:var(--ink-explainer);font-size:11px;line-height:1.65}.player-match-method summary{cursor:pointer;color:var(--ink-accent)}.player-match-method p{font-size:11px;margin:12px 0}.player-match-method a{color:var(--ink-accent)}
+@media(max-width:1050px){.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.metric-grid{grid-template-columns:1fr}}
