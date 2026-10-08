@@ -17,3 +17,16 @@ assert(performance(sample(18,17,18,18,1),{gsax:1,complete:true}).note.includes('
 assert(performance(sample(18,17,18,18,20),{gsax:1,complete:true}).title.includes('jämn'));
 assert.equal(performance(sample(0,0,0,0,0)).title,'Analysunderlag saknas');
 const fbk=teamGames(snapshot.games,'Färjestad BK','all','all');const fbkStats=aggregate(fbk,'Färjestad BK','all');console.log('Färjestad analysis:',performance(fbkStats,{gsax:fbkStats.xga-fbkStats.ga,complete:true}).title);console.log('PASS: nuanced team assessments, offsetting offense/defense, matched goalkeeper coverage, missing data and small samples.');
+
+// Weighted shooting efficiency; missing or zero shots must not become 0%.
+const {sumStats}=await import('../lib/hockey.ts');
+const {playerMatchStats}=await import('../lib/player-match.ts');
+const stat=(gf,sog)=>({gf,ga:0,xgf:1,xga:1,sog});
+assert.equal(sumStats([stat(1,2),stat(1,18)]).shooting,10);
+assert.equal(sumStats([stat(0,0)]).shooting,null);
+assert.equal(sumStats([stat(1,10),stat(0,undefined)]).shooting,null);
+assert.equal(sumStats([]).shooting,null);
+const shot=(outcome,xg,extra={})=>({player:'Test',home:true,eligible:true,emptyNet:false,period:1,outcome,xg,...extra});
+const pr=playerMatchStats({home:'A',away:'B',shots:[shot('goal',.2),shot('saved',.1),shot('missed',.1),shot('blocked',0),shot('goal',.8,{period:4}),shot('goal',.8,{emptyNet:true}),shot('saved',.1,{eligible:false}),shot('blocked',0,{home:false}),shot('goal',.1,{player:'Okänd spelare'})]});
+assert.equal(pr.length,2);assert.deepEqual(pr[0],{name:'Test',team:'A',goals:1,sog:2,attempts:4,xg:.4,shooting:50});assert.equal(pr[1].shooting,null);
+console.log('PASS: weighted shooting efficiency, missing and zero shots, individual xG, team identity and match exclusions.');
