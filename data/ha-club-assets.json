@@ -1,0 +1,100 @@
+[
+  {
+    "code": "AIK",
+    "name": "AIK",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/aik_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-aik.webp",
+    "bytes": 6674
+  },
+  {
+    "code": "AIS",
+    "name": "Almtuna IS",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/ais_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-ais.webp",
+    "bytes": 10816
+  },
+  {
+    "code": "BIK",
+    "name": "BIK Karlskoga",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/bik_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-bik.webp",
+    "bytes": 6918
+  },
+  {
+    "code": "IKO",
+    "name": "IK Oskarshamn",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/iko_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-iko.webp",
+    "bytes": 8220
+  },
+  {
+    "code": "KHC",
+    "name": "Kalmar HC",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/khc_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-khc.webp",
+    "bytes": 8924
+  },
+  {
+    "code": "LIF",
+    "name": "Leksands IF",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/lif_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-lif.webp",
+    "bytes": 8344
+  },
+  {
+    "code": "MIK",
+    "name": "Mora IK",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/mik_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-mik.webp",
+    "bytes": 8518
+  },
+  {
+    "code": "MODO",
+    "name": "MoDo Hockey",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/modo_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-modo.webp",
+    "bytes": 5966
+  },
+  {
+    "code": "NYB",
+    "name": "Nybro Vikings",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/nyb_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-nyb.webp",
+    "bytes": 8326
+  },
+  {
+    "code": "OSIK",
+    "name": "Östersund IK",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/osik_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-osik.webp",
+    "bytes": 4116
+  },
+  {
+    "code": "SSK",
+    "name": "Södertälje SK",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/ssk_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-ssk.webp",
+    "bytes": 10644
+  },
+  {
+    "code": "VHC",
+    "name": "Vimmerby Hockey",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/vhc_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-vhc.webp",
+    "bytes": 11262
+  },
+  {
+    "code": "VIK",
+    "name": "Västerås IK",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/vik_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-vik.webp",
+    "bytes": 4164
+  },
+  {
+    "code": "VIS",
+    "name": "Visby Roma HK",
+    "url": "https://ha-media.hadigital.se/ha-league/statnet-logos/vis_medium.webp?ver=202609230706",
+    "file": "/clubs/ha-vis.webp",
+    "bytes": 7734
+  }
+]
