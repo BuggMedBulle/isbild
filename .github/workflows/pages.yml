@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       refresh_data:
-        description: 'Fetch new SHL match events before publishing'
+        description: 'Fetch new SHL and Hockeyallsvenskan match events before publishing'
         type: boolean
         default: true
       retrain_model:
@@ -13,8 +13,8 @@ on:
         type: boolean
         default: false
   schedule:
-    # After regular match nights, in Swedish local time including DST.
-    - cron: '0 22 * * 2,4,6'
+    # After match nights in both leagues, in Swedish local time including DST.
+    - cron: '0 22 * * *'
       timezone: 'Europe/Stockholm'
     # Daily fallback for late games, rescheduled games and source updates.
     - cron: '23 0 * * *'
@@ -55,6 +55,9 @@ jobs:
       - name: Refresh SHL snapshot
         if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.refresh_data || inputs.retrain_model))
         run: pnpm sync:shl
+      - name: Refresh Hockeyallsvenskan snapshot
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.refresh_data || inputs.retrain_model))
+        run: pnpm sync:ha
       - name: Refresh official powerplay and boxplay
         if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.refresh_data || inputs.retrain_model))
         run: pnpm sync:special-teams
@@ -65,9 +68,9 @@ jobs:
       - name: Keep validated match data in repository
         if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.refresh_data || inputs.retrain_model))
         run: |
-          git add data/shl-2026.json public/data/shl-2026.json data/xg-model.json data/model-evaluation.json data/goalie-history.json data/special-teams.json public/data/special-teams.json
+          git add data/ha-2026.json public/data/ha-2026.json data/shl-2026.json public/data/shl-2026.json data/xg-model.json data/model-evaluation.json data/goalie-history.json data/special-teams.json public/data/special-teams.json
           if ! git diff --cached --quiet; then
-            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Update verified SHL match data'
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Update verified hockey match data'
             git push
           fi
       - uses: actions/upload-pages-artifact@v4
