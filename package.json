@@ -11,7 +11,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "node tests/shl.mjs && node tests/analysis.mjs && node tests/xg-table.mjs && node tests/advanced.mjs && node tests/special-teams.mjs",
+    "test": "node tests/shl.mjs && node tests/analysis.mjs && node tests/xg-table.mjs && node tests/advanced.mjs && node tests/special-teams.mjs && node tests/game-score.mjs",
     "sync:shl": "node scripts/sync-shl.mjs",
     "sync:special-teams": "node scripts/sync-special-teams.mjs"
   },
