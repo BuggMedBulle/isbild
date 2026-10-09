@@ -127,3 +127,11 @@ positionsbaserade referensvärden, defensiv och relativ lagjustering. SHL:s
 Ingen defensiv uppskattas från plus/minus eller antal blockar som ersättning.
 `tests/game-score.mjs` verifierar vikter, assistkorrigeringar, matchurval och
 att saknat underlag inte omvandlas till noll.
+
+### Hockeyallsvenskan
+
+Liga väljs med SHL/Hockeyallsvenskan-växlaren. `liga=ha` ingår i delade länkar; lag och favorit sparas separat för varje liga. Hockeyallsvenskan använder sin officiella publika statistik och riktiga klubbemblem. `pnpm sync:ha` verifierar samtliga spelade resultat, täckningen för lag/spelare/målvakter, matchantal, mål och special teams innan båda snapshotfilerna ersätts. Misslyckad hämtning behåller föregående publicerade version.
+
+HA:s nuvarande publika `play-by-play` innehåller skott, mål, assist och målvaktsbyten men **inga skottpositioner**. Därför beräknas inte xG, GSAx, skottkartor, xG-tabell eller offensivt bidrag för HA. Saknade värden visas som — och förklaras i gränssnittet. Säsongsstatistiken följer ligans officiella urval inklusive förlängning. Spelar- och målvaktsstatistik per match använder ett separat verifierat urval: ordinarie tid med båda målvakterna på isen. Saknad målvaktsidentitet gör matchstatistiken otillgänglig.
+
+GitHub Actions uppdaterar båda ligorna varje kväll kl. 22:00 svensk tid, med nattlig kontroll kl. 00:23. Den dagliga kvällskörningen täcker även Hockeyallsvenskans andra matchdagar. Inga betalda tjänster krävs.
