@@ -1,12 +1,12 @@
 # Under isen
 
-En fristående, kostnadsfri analysplattform för SHL-fans. Förstå chansskapande,
+En fristående, kostnadsfri analysplattform för fans av SHL och Hockeyallsvenskan. Förstå chansskapande,
 målutfall och spelet bakom resultaten.
 
 ## Webbplats
 
 Projektet är förberett för **GitHub Pages på BuggMedBulle/isbild**.
-Koden, SHL-snapshoten, klubbemblemen och publiceringsflödet finns i detta repo.
+Koden, snapshots för båda ligorna, klubbemblemen och publiceringsflödet finns i detta repo.
 Ingen extern server, databas, OpenAI API eller betald datatjänst behövs.
 
 ## Funktioner
@@ -39,17 +39,20 @@ bara en dag. GitHub- och SHL-tjänsternas tillgänglighet och gränser gäller.
 
 ## Uppdateringar
 
-Workflowen bygger på push till main. Den hämtar också matchdata dagligen
-22:23 UTC och kan startas manuellt med `refresh_data`. Detta motsvarar00:23
-under svensk sommartid och23:23 under svensk vintertid. Efter sena matcher
-kan data dröja till nästa körning. Schemalagda GitHub-jobb kan försenas och
-inaktiveras efter60 dagars inaktivitet i publika repos; kontrollera Actions.
-Knappen i Under isen läser senast publicerade data, inte SHL direkt i webbläsaren.
+Workflowen bygger på push till main. Den hämtar matchdata för båda ligorna
+varje kväll kl. 22:00 svensk tid och kontrollerar igen kl. 00:23. Svensk
+sommar- och vintertid följs. Körningen kan också startas manuellt med
+`refresh_data`. Efter sena matcher kan data dröja till nästa körning.
+Schemalagda GitHub-jobb kan försenas och inaktiveras efter 60 dagars
+inaktivitet i publika repos; kontrollera Actions. Knappen i Under isen
+läser senast publicerade data, inte ligornas tjänster direkt i webbläsaren.
 
-Sync hämtar nya färdigspelade matcher och korrigeringar för senaste8 dagarna
-(max var12h). Tre matcher åt gången. Ofullständigt underlag, orimliga
-koordinater eller mål som inte matchar slutresultatet stoppar uppdateringen.
-Den tidigare publiceringen behålls vid fel. Modellträning körs inte vid sync.
+SHL-sync hämtar nya färdigspelade matcher och korrigeringar för senaste
+8 dagarna (max var 12h), tre matcher åt gången. Ofullständigt underlag,
+orimliga koordinater eller mål som inte matchar slutresultatet stoppar
+uppdateringen. Hockeyallsvenskans separata verifiering och databegränsningar
+beskrivs nedan. Den tidigare publiceringen behålls vid fel. Modellträning
+körs inte vid sync.
 
 ## Utveckla lokalt
 
