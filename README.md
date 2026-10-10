@@ -105,7 +105,7 @@ The PP & BP view uses SHL’s public Statnet statistics API for season 2026/27 (
 This view is full-season, all venues, using official source scope (including overtime and empty-net situations). It deliberately has no last-five or venue filters: the official API applies last-X before location, unlike the existing Under isen selection. Do not silently substitute one selection for another. Per-60 figures use actual PP/PK time; zero denominators are displayed as missing. xG by strength and five-on-five xG remain unavailable until strength is verified for every shot.
 
 
-## Offensivt bidrag v0.1 – grund för Game Score
+## Game Score v0.2 – förenklad offensiv och defensiv beta
 
 På match- och spelarsidorna visas ett **rått individuellt offensivt bidrag**:
 `0.75 * goals + 0.70 * firstAssists + 0.55 * secondAssists + 0.50 * ixG`.
@@ -124,10 +124,20 @@ assistuppgifter ger inget bidragsvärde för lagets urval; okända värden blir 
 Matcher med händelser är inte officiellt GP.
 
 Full Game Score återstår: on-ice Corsi, verifierad istid och ixG per spelform,
-positionsbaserade referensvärden, defensiv och relativ lagjustering. SHL:s
+positionsbaserade referensvärden, komplett defensiv och relativ lagjustering. SHL:s
 `players_extendedMetrics` gav en tom lista för säsong `qa98unlbd6` vid kontroll
 2026-10-09. Artikeln publicerar inte en fullständig normaliserings-/blandningsformel.
-Ingen defensiv uppskattas från plus/minus eller antal blockar som ersättning.
+Defensiv beta: `-0.50 * goalsAgainstOnIce - 0.15 * personalPenaltyMinutes`.
+Den gemensamma målvikten är vår förenkling, inte Hockeysiffrors positions- och
+spelformsvikter. Score summerar denna del och det individuella offensiva bidraget.
+Baklängesmål tillskrivs namngivna utespelare i SHL:s `nep` vid inkluderade mål,
+med verifierad målvakt bortfiltrerad. Personliga utvisningsminuter hämtas från
+`variant`; lagstraff tillskrivs inte spelaren som sitter av dem. Tom bur,
+förlängning och utvisningar vid slutsignalen utesluts. `defenseData.version: 1`
+och lagvis komplett täckning krävs; saknade mål-/utvisningsuppgifter ger streck.
+Inget värde uppskattas från plus/minus eller antal blockar. Noll betyder inga
+registrerade avdrag, inte genomsnittlig defensiv. Istid, roll och medspelare
+påverkar starkt och måttet identifierar inte individuellt ansvar för mål.
 `tests/game-score.mjs` verifierar vikter, assistkorrigeringar, matchurval och
 att saknat underlag inte omvandlas till noll.
 
