@@ -14,3 +14,8 @@ export function defensiveContribution(input:{penaltyMinutes:number|null;goalsAga
  if([input.penaltyMinutes,input.goalsAgainstOnIce].some(v=>typeof v!=='number'||!Number.isInteger(v)||v<0))return null;
  return -(input.penaltyMinutes!*.15+input.goalsAgainstOnIce!*.5)||0;
 }
+
+/** Symmetric with our own raw beta's goals-against weight, not a full Game Score. */
+export function onIceOffensiveContribution(goalsForOnIce:number|null){
+ return typeof goalsForOnIce==='number'&&Number.isInteger(goalsForOnIce)&&goalsForOnIce>=0?goalsForOnIce*.5:null;
+}
