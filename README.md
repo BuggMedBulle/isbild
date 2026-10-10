@@ -105,7 +105,7 @@ The PP & BP view uses SHL’s public Statnet statistics API for season 2026/27 (
 This view is full-season, all venues, using official source scope (including overtime and empty-net situations). It deliberately has no last-five or venue filters: the official API applies last-X before location, unlike the existing Under isen selection. Do not silently substitute one selection for another. Per-60 figures use actual PP/PK time; zero denominators are displayed as missing. xG by strength and five-on-five xG remain unavailable until strength is verified for every shot.
 
 
-## Game Score v0.2 – förenklad offensiv och defensiv beta
+## Game Score v0.3 – mål framåt och bakåt på isen
 
 På match- och spelarsidorna visas ett **rått individuellt offensivt bidrag**:
 `0.75 * goals + 0.70 * firstAssists + 0.55 * secondAssists + 0.50 * ixG`.
@@ -129,7 +129,13 @@ positionsbaserade referensvärden, komplett defensiv och relativ lagjustering. S
 2026-10-09. Artikeln publicerar inte en fullständig normaliserings-/blandningsformel.
 Defensiv beta: `-0.50 * goalsAgainstOnIce - 0.15 * personalPenaltyMinutes`.
 Den gemensamma målvikten är vår förenkling, inte Hockeysiffrors positions- och
-spelformsvikter. Score summerar denna del och det individuella offensiva bidraget.
+spelformsvikter. Score summerar denna del, det individuella offensiva bidraget och lagoffensiven.
+Lagoffensiv: `+0.50 * goalsForOnIce`, även utan eget mål eller assist.
+Mål framåt hämtas från `pop`, med det egna lagets verifierade målvakt bortfiltrerad.
+Unika namn, rimligt antal spelare och målskyttens närvaro krävs.
+`onIceForData.version: 1` och full lagvis täckning krävs. Ett saknat `pop`
+gör lagoffensiv och total score otillgängliga, men individuellt bidrag kan visas.
++0.50 och −0.50 är symmetriska egna betavikter, inte Hockeysiffrors fulla modell.
 Baklängesmål tillskrivs namngivna utespelare i SHL:s `nep` vid inkluderade mål,
 med verifierad målvakt bortfiltrerad. Personliga utvisningsminuter hämtas från
 `variant`; lagstraff tillskrivs inte spelaren som sitter av dem. Tom bur,
@@ -140,6 +146,35 @@ registrerade avdrag, inte genomsnittlig defensiv. Istid, roll och medspelare
 påverkar starkt och måttet identifierar inte individuellt ansvar för mål.
 `tests/game-score.mjs` verifierar vikter, assistkorrigeringar, matchurval och
 att saknat underlag inte omvandlas till noll.
+
+### Datakartläggning för komplett Game Score – 2026-10-11
+
+Verifierat genom anonyma HTTP-anrop till SHL:s publika API, utan betaltjänst.
+Den tidigare formuleringen att istid saknas avsåg vår import, inte att SHL saknar uppgifterna.
+
+| Underlag | Verifierad källa | Resultat / begränsning |
+| --- | --- | --- |
+| Individuell istid per match, position, blockerade skott | `https://www.shl.se/api/gameday/player-stats/zmrkc06ec8` | `TOI`, `POS`, `BkS`, spelar-ID och namn finns. Charles Hudon 15:34 mot Örebro 8 oktober. |
+| Sammanlagd istid och PP/BP-istid per match i snitt | `players_timeOnIce` | 318 rader: `TOI`, `TOI_GP`, `PPTOI_GP`, `SHTOI_GP`, position och stabilt UUID. |
+| Lika styrka: istid och mål på isen | `players_equalStrength` | 318 rader: `ESTOI_GP`, `ESPlus`, `ESMinus` samt individuella mål, assist och skott. |
+| PP: istid och mål på isen | `players_powerplay` | `PPTOI_GP`, `PPPlus`, `PPMinus` finns. |
+| BP: istid och mål på isen | `players_penaltykilling` | `SHTOI_GP`, `SHPlus`, `SHMinus` finns. |
+| Blockerade skott och position | `players_defensive` | `BkS`, `info.position` finns. Blockar ersätter inte on-ice Corsi. |
+| On-ice Corsi | `players_extendedMetrics` | HTTP 200 men tom lista för 2026/27. Samma modul ger 407 rader med `CF`/`CA` för 2025/26 (`ssgtUuid=iuzqg7dqk9`, `state=closed`). Inte noll eller bevis för att endpointen saknas. |
+| Vilka spelare som var inne vid varje skott | `gameday/play-by-play` | Granskad match innehåller skytt och position men ingen komplett on-ice-lista vid vanliga skott; `pop`/`nep` finns vid mål. |
+
+Statistikmodulerna ligger under `https://www.shl.se/api/statistics-v2/stats-info/`
+med `ssgtUuid=qa98unlbd6&provider=statnet&count=500&moduleType=<modul>&state=active`.
+Använd modulnamnet utan `players_` i `moduleType`.
+
+Nästa integrationssteg är stabila spelar-ID:n, officiell matchistid och matchuppdelad
+istid per spelform. Säsongsgenomsnitt (avrundade mm:ss) får inte multipliceras till
+påstått exakt matchistid. Officiell TOI omfattar även situationer som vår råa beta
+utesluter; beta får inte delas med den istiden och kallas en jämförbar per-60-modell.
+För full defensiv saknas fortfarande verifierad on-ice Corsi eller kompletta
+bytesintervall. Matchade urval, positionsreferenser och relativ lagjustering återstår.
+Hockeysiffrors artikel specificerar inte den exakta blandningen mellan relativ form
+och per 60, så även med data behöver vår fulla modell dokumenteras som en egen tolkning.
 
 ### Hockeyallsvenskan
 
