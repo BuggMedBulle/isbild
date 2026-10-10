@@ -51,3 +51,30 @@ assert.equal(leaguePlayerStats([dg,{...dg,id:'second',home:'A',away:'H'}],'all',
 const actual=JSON.parse(fs.readFileSync(new URL('../data/shl-2026.json',import.meta.url),'utf8')).games.find(g=>g.id==='shl-zmrkc06ec8');
 if(actual?.defenseData){const r=playerMatchStats(actual).find(r=>r.name==='Gustav Lindström');assert.equal(r.penaltyMinutes,2);assert.equal(r.goalsAgainstOnIce,1);assert.equal(r.defense,-.8);}
 console.log('PASS defensive beta: missing coverage, on-ice attribution, bench penalties, revisions, goalies, scope and aggregation.');
+
+// Positive on-ice contribution: non-scorers count, unknown coverage never becomes zero.
+const {onIceOffensiveContribution}=await import('../lib/game-score.ts');
+assert.equal(onIceOffensiveContribution(2),1);
+for(const missing of [null,undefined,NaN,-1,1.5])assert.equal(onIceOffensiveContribution(missing),null);
+const fg={...g,onIceForData:{version:1,complete:{home:true,away:true}},defenseData:{version:1,complete:{home:true,away:true},penalties:[]},shots:[{...shot,attackingSkaters:['Scorer','Passer','Screen']}]};
+let fr=playerMatchStats(fg);
+assert.equal(fr.find(p=>p.name==='Scorer').partialScore,1.35);
+assert.equal(fr.find(p=>p.name==='Screen').partialScore,.5);
+assert.equal(fr.find(p=>p.name==='Screen').goals,0);
+assert.equal(fr.find(p=>p.name==='Screen').goalsForOnIce,1);
+assert.equal(playerMatchStats({...fg,onIceForData:undefined}).find(p=>p.name==='Scorer').partialScore,null);
+assert.equal(leaguePlayerStats([fg,{...fg,id:'b'}]).find(p=>p.name==='Screen').partialScore,1);
+assert.equal(leaguePlayerStats([fg,{...fg,id:'b',onIceForData:undefined}]).find(p=>p.name==='Screen').partialScore,null);
+assert.equal(leaguePlayerStats([fg,{...fg,id:'b',home:'A',away:'H'}],'all','home').find(p=>p.team==='H'&&p.name==='Screen').partialScore,.5);
+const pop=[{firstName:'Keeper',familyName:'home'},goal.player,{firstName:'B',familyName:'Passer'},{firstName:'C',familyName:'Screen'}];
+const popEvents=[keeper('home'),keeper('away'),{...goal,pop}];
+assert.deepEqual(extractShots(popEvents)[0].attackingSkaters,['A Scorer','B Passer','C Screen']);
+assert.equal(extractShots([...popEvents,{...goal,revision:2,pop:[...pop,pop[1]]}])[0].attackingSkaters,undefined);
+assert.equal(extractShots([keeper('home'),keeper('away'),{...goal,pop:pop.slice(1)}])[0].attackingSkaters,undefined);
+assert.equal(playerMatchStats({...fg,shots:[{...fg.shots[0],period:4}]}).length,0);
+assert.equal(playerMatchStats({...fg,shots:[{...fg.shots[0],emptyNet:true}]}).length,0);
+console.log('PASS positive on-ice contribution: non-scorers, scope, aggregation, coverage, goalie removal and corrections.');
+
+if(actual?.onIceForData){const hudon=playerMatchStats(actual).find(p=>p.name==='Charles Hudon');assert.equal(hudon.goalsForOnIce,2);assert.equal(hudon.onIceOffense,1);assert.equal(hudon.partialScore,hudon.offense+1+hudon.defense);}
+const balanced={...fg,shots:[...fg.shots,{...shot,id:'against',home:false,player:'Opponent',assists:{first:null,second:null},attackingSkaters:['Opponent'],defendingSkaters:['Screen']} ]};
+assert.equal(playerMatchStats(balanced).find(p=>p.name==='Screen').partialScore,0);
