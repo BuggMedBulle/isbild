@@ -23,3 +23,31 @@ const goal={eventId:3,revision:1,type:'goal',period:1,time:'01:00',eventTeam:{pl
 const parsed=extractShots([keeper('home'),keeper('away'),goal,{...goal,revision:2,assists:{second:{firstName:'C',familyName:'Passer'}}}]);
 assert.deepEqual(parsed[0].assists,{first:null,second:'C Passer'});
 console.log('PASS Game Score offensive contribution: weights, missing data, assist-only players, corrected assists, scope and aggregation.');
+
+// Defensive beta: attribution must survive revisions and never charge goalies/bench servers.
+const {defensiveContribution}=await import('../lib/game-score.ts');
+const {extractDefense}=await import('../lib/shl.ts');
+assert.equal(defensiveContribution({penaltyMinutes:2,goalsAgainstOnIce:1}),-.8);
+assert.equal(defensiveContribution({penaltyMinutes:0,goalsAgainstOnIce:0}),0);
+assert.equal(defensiveContribution({penaltyMinutes:null,goalsAgainstOnIce:0}),null);
+assert.equal(defensiveContribution({penaltyMinutes:0,goalsAgainstOnIce:1.5}),null);
+const v={minorTime:'2',doubleMinorTime:'0',benchTime:'0',majorTime:'0',misconductTime:'0',gMTime:'0',mPTime:'0'};
+const pen={eventId:4,type:'penalty',period:1,time:'02:00',revision:1,eventTeam:{place:'home'},player:{firstName:'A',familyName:'Defender'},variant:v};
+const defEvents=[keeper('home'),keeper('away'),pen,{...pen,revision:2,variant:{...v,minorTime:'0',doubleMinorTime:'4'}}];
+const parsedDefense=extractDefense(defEvents,[]);assert.deepEqual(parsedDefense.penalties,[{name:'A Defender',home:true,minutes:4}]);
+assert.equal(extractDefense([keeper('home'),keeper('away'),{...pen,variant:{...v,benchTime:'2'}}],[]).penalties.length,0);
+assert.equal(extractDefense([keeper('home'),keeper('away'),{...pen,period:4}],[]).penalties.length,0);
+assert.equal(extractDefense([keeper('home'),keeper('away'),{...keeper('home'),eventId:8,time:'01:00',isEntering:false},pen],[]).penalties.length,0);
+assert.equal(extractDefense([pen],[]).complete.home,false);
+assert.equal(extractDefense([keeper('home'),keeper('away'),{...pen,variant:undefined}],[]).complete.home,false);
+const ds={...shot,home:false,defendingSkaters:['Defender','Keeper home'],goalie:{id:'Keeper home',name:'Keeper home'},assists:{first:null,second:null}};
+const dg={...g,shots:[ds],defenseData:{version:1,complete:{home:true,away:true},penalties:[{name:'Defender',home:true,minutes:2}]}};
+const dr=playerMatchStats(dg);assert.equal(dr.find(r=>r.name==='Defender').defense,-.8);assert.equal(dr.find(r=>r.name==='Defender').attempts,0);assert.equal(dr.some(r=>r.name==='Keeper home'),false);
+assert.equal(playerMatchStats({...dg,defenseData:undefined}).find(r=>r.name==='Defender').defense,null);
+assert.equal(extractDefense([], [{...ds,defendingSkaters:undefined}]).complete.home,false);
+assert.equal(leaguePlayerStats([dg,{...dg,id:'second'}]).find(r=>r.name==='Defender').defense,-1.6);
+assert.equal(leaguePlayerStats([dg,{...dg,id:'second',defenseData:undefined}]).find(r=>r.name==='Defender').defense,null);
+assert.equal(leaguePlayerStats([dg,{...dg,id:'second',home:'A',away:'H'}],'all','home').find(r=>r.team==='H'&&r.name==='Defender').defense,-.8);
+const actual=JSON.parse(fs.readFileSync(new URL('../data/shl-2026.json',import.meta.url),'utf8')).games.find(g=>g.id==='shl-zmrkc06ec8');
+if(actual?.defenseData){const r=playerMatchStats(actual).find(r=>r.name==='Gustav Lindström');assert.equal(r.penaltyMinutes,2);assert.equal(r.goalsAgainstOnIce,1);assert.equal(r.defense,-.8);}
+console.log('PASS defensive beta: missing coverage, on-ice attribution, bench penalties, revisions, goalies, scope and aggregation.');
