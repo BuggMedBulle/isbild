@@ -8,3 +8,9 @@ export function offensiveContribution(input:Record<keyof typeof offensiveWeights
  if(Object.keys(offensiveWeights).some(key=>typeof input[key as keyof typeof input]!=='number'))return null;
  return Object.entries(offensiveWeights).reduce((sum,[key,weight])=>sum+input[key as keyof typeof input]!*weight,0);
 }
+
+/** Own raw all-strength beta; shared goal weight is not Hockeysiffror's ES weights. */
+export function defensiveContribution(input:{penaltyMinutes:number|null;goalsAgainstOnIce:number|null}){
+ if([input.penaltyMinutes,input.goalsAgainstOnIce].some(v=>typeof v!=='number'||!Number.isInteger(v)||v<0))return null;
+ return -(input.penaltyMinutes!*.15+input.goalsAgainstOnIce!*.5)||0;
+}
