@@ -249,3 +249,5 @@ input,select,textarea{font-family:inherit}
 .league-menu .league-logo{width:50px;height:34px}
 @media(max-width:1250px){.header-right{gap:8px}.header-right .favorite-nav{height:44px}.league-nav[data-slot=select-trigger]{width:70px}}
 @media(max-width:380px){.topbar{padding-inline:12px;gap:8px}.header-right{gap:5px}.league-nav[data-slot=select-trigger]{width:64px}.league-nav .league-logo{width:34px}}
+
+.league-sort-button{display:inline-flex;align-items:center;gap:5px;font:inherit;color:inherit;cursor:pointer;white-space:nowrap}.league-sort-button:hover{color:var(--plot-own)}.league-sort-button:focus-visible{outline:2px solid var(--plot-own);outline-offset:4px;border-radius:3px}
