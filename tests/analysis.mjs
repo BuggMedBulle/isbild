@@ -40,3 +40,15 @@ const pa=lp.find(p=>p.team==='A');assert.equal(pa.matches,2);assert.equal(pa.goa
 const playerLast=leaguePlayerStats(fixtures,'1');assert.equal(playerLast.find(p=>p.team==='A').goals,0);assert.equal(playerLast.find(p=>p.team==='A').xg,.3);assert.equal(playerLast.find(p=>p.team==='B').goals,1);
 assert.equal(leaguePlayerStats(fixtures,'all','home').find(p=>p.team==='A').matches,1);assert.equal(leaguePlayerStats(fixtures,'all','away').find(p=>p.team==='A').goals,0);assert.deepEqual(leaguePlayerStats([]),[]);
 console.log('PASS: league player aggregation, club-specific windows, venue filters, weighted efficiency and no duplicate games.');
+
+// Separate offense/defense ranking must account for different game counts.
+const {rankTeamPerformance}=await import('../lib/analysis.ts');
+const baseRow={gf:0,ga:0,share:50,goalShare:null,corsi:null,sog:null,soga:null,shooting:null};
+const perfRows=[{...baseRow,team:'A',n:10,xgf:30,xga:20},{...baseRow,team:'B',n:5,xgf:20,xga:12}];
+assert.equal(rankTeamPerformance(perfRows,'xgf')[0].team,'A');
+assert.equal(rankTeamPerformance(perfRows,'xgfRate')[0].team,'B');
+assert.equal(rankTeamPerformance(perfRows,'xga')[0].team,'B');
+assert.equal(rankTeamPerformance(perfRows,'xgaRate')[0].team,'A');
+assert.equal(rankTeamPerformance([...perfRows,{...baseRow,team:'Missing',n:0,xgf:0,xga:0}],'xgaRate').at(-1).team,'Missing');
+assert.equal(perfRows[0].team,'A');
+console.log('PASS isolated xGF/xGA ranks: totals versus per-game rates, defense direction, missing denominators and immutable input.');
