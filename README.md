@@ -105,7 +105,7 @@ The PP & BP view uses SHL’s public Statnet statistics API for season 2026/27 (
 This view is full-season, all venues, using official source scope (including overtime and empty-net situations). It deliberately has no last-five or venue filters: the official API applies last-X before location, unlike the existing Under isen selection. Do not silently substitute one selection for another. Per-60 figures use actual PP/PK time; zero denominators are displayed as missing. xG by strength and five-on-five xG remain unavailable until strength is verified for every shot.
 
 
-## Game Score v0.3 – mål framåt och bakåt på isen
+## Game Score v0.4 – officiell istid och spelaridentitet
 
 På match- och spelarsidorna visas ett **rått individuellt offensivt bidrag**:
 `0.75 * goals + 0.70 * firstAssists + 0.55 * secondAssists + 0.50 * ixG`.
@@ -117,8 +117,10 @@ högre värde. Noll är inget registrerat offensivt bidrag, inte ligagenomsnitte
 
 Första-/andraassist hämtas explicit från SHL:s `assists.first`/`assists.second`
 på inkluderade målhändelser. Spelare utan avslut men med assist inkluderas.
-Målvakter med verifierad identitet filtreras bort. Namn och klubb används som
-spelarnyckel; detta behöver ersättas med stabilt spelar-ID inför full spelarprofil.
+Målvakter med verifierad identitet filtreras bort. SHL:s stabila numeriska spelar-ID och klubb används som spelarnyckel när ID finns,
+med namn som reserv för äldre/importerade underlag. Målhändelsernas `pop`/`nep`,
+assist och utvisningar kopplas också med spelar-ID för att undvika dubletter från
+olika stavningar av samma namn.
 Gamla snapshots får streck tills `playerDataVersion: 1` har hämtats. Ofullständiga
 assistuppgifter ger inget bidragsvärde för lagets urval; okända värden blir inte noll.
 Matcher med händelser är inte officiellt GP.
@@ -147,6 +149,34 @@ påverkar starkt och måttet identifierar inte individuellt ansvar för mål.
 `tests/game-score.mjs` verifierar vikter, assistkorrigeringar, matchurval och
 att saknat underlag inte omvandlas till noll.
 
+### Officiell spelarstatistik – integrerad 2026-10-12
+
+`lib/player-source.ts` hämtar `gameday/player-stats/<match-uuid>` och verifierar
+provider, båda lagens spelarlistor, unika ID:n, period/lagtillhörighet samt att
+spelarlistans mål summerar till rätt slutresultat (med korrigering för straffavgörande).
+Matchistid, position och blockade skott lagras i `officialPlayers.version: 1`.
+Matcher med verifierad istid inkluderar även spelare utan andra händelser.
+Matcher med istid är en härledd räkning av matcher med TOI > 0, inte officiellt GP.
+Spelar- och matchsidan visar officiell istid separat från betan och erbjuder
+sortering på istid. Okänd tid eller blockerade skott blir null, aldrig noll.
+Saknad matchtäckning ger ingen summerad officiell istid eller matchräkning.
+
+Officiell TOI inkluderar förlängning och tom målbur. Den används därför **inte**
+för att normalisera betans snävare urval. Blockerade skott läggs inte in som
+ersättning för on-ice Corsi. Om optional matchstatistik är felaktig behålls övriga
+verifierade matchhändelser och ett explicit fel sparas; felaktiga spelaruppgifter
+publiceras inte. Den saknade matchstatistiken prövas igen vid nästa synk.
+
+Efter hämtning 2026-10-12 verifierades 54 av 55 matcher. Match `mcz9uhgh1f`
+har en avvikelse mellan spelarlistans mål och slutresultatet; den behandlas som
+saknad officiell spelarstatistik. Aktuellt `players_extendedMetrics` ger fortsatt
+HTTP 200 med tom lista. `gameday/periodstats` och initial-events gav HTTP 500
+för kontrollmatchen. Ingen verifierad källa till kompletta bytesintervall hittades.
+
+Full Game Score är fortfarande blockerad av aktuell on-ice Corsi och exakt
+matchad istid per spelform. Först efter att dessa finns kan per-60,
+positionsreferenser och relativ lagjustering beräknas med samma urval.
+
 ### Datakartläggning för komplett Game Score – 2026-10-11
 
 Verifierat genom anonyma HTTP-anrop till SHL:s publika API, utan betaltjänst.
@@ -167,8 +197,8 @@ Statistikmodulerna ligger under `https://www.shl.se/api/statistics-v2/stats-info
 med `ssgtUuid=qa98unlbd6&provider=statnet&count=500&moduleType=<modul>&state=active`.
 Använd modulnamnet utan `players_` i `moduleType`.
 
-Nästa integrationssteg är stabila spelar-ID:n, officiell matchistid och matchuppdelad
-istid per spelform. Säsongsgenomsnitt (avrundade mm:ss) får inte multipliceras till
+Stabila spelar-ID:n och officiell matchistid är integrerade. Matchuppdelad
+istid per spelform återstår. Säsongsgenomsnitt (avrundade mm:ss) får inte multipliceras till
 påstått exakt matchistid. Officiell TOI omfattar även situationer som vår råa beta
 utesluter; beta får inte delas med den istiden och kallas en jämförbar per-60-modell.
 För full defensiv saknas fortfarande verifierad on-ice Corsi eller kompletta
