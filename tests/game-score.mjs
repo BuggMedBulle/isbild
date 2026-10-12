@@ -78,3 +78,22 @@ console.log('PASS positive on-ice contribution: non-scorers, scope, aggregation,
 if(actual?.onIceForData){const hudon=playerMatchStats(actual).find(p=>p.name==='Charles Hudon');assert.equal(hudon.goalsForOnIce,2);assert.equal(hudon.onIceOffense,1);assert.equal(hudon.partialScore,hudon.offense+1+hudon.defense);}
 const balanced={...fg,shots:[...fg.shots,{...shot,id:'against',home:false,player:'Opponent',assists:{first:null,second:null},attackingSkaters:['Opponent'],defendingSkaters:['Screen']} ]};
 assert.equal(playerMatchStats(balanced).find(p=>p.name==='Screen').partialScore,0);
+
+// Official metadata uses its own scope. Stable IDs prevent two spellings becoming two players.
+const {parseOfficialPlayers,timeSeconds,formatIceTime}=await import('../lib/player-source.ts');
+assert.equal(timeSeconds('15:34'),934);assert.equal(timeSeconds('15:60'),null);assert.equal(timeSeconds(''),null);assert.equal(formatIceTime(934),'15:34');
+const officialSchedule={uuid:'test',homeTeamInfo:{score:1},awayTeamInfo:{score:0},overtime:false,shootout:false};
+function officialFixture(){const p={provider:'statnet',stats:{},players:{}};for(const [home,side] of [[true,'homeTeamValue'],[false,'awayTeamValue']]){p.stats[side]=[];p.players[side]={};for(let i=0;i<10;i++){const id=String((home?100:200)+i);p.stats[side].push({G:home&&i===0?1:0,TOI:i===9?'00:00':'15:34',POS:i%2?'RD':'LW',BkS:0,info:{playerId:Number(id),period:0,team:home?'home':'away'}});p.players[side][id]={fullName:`${home?'Home':'Away'} ${i}`};}}return p;}
+const official=parseOfficialPlayers(officialFixture(),officialSchedule);
+assert.equal(official.players[0].seconds,934);assert.equal(official.players[1].position,'D');
+const badGoals=officialFixture();badGoals.stats.homeTeamValue[0].G=2;assert.throws(()=>parseOfficialPlayers(badGoals,officialSchedule));
+const badTime=officialFixture();badTime.stats.homeTeamValue[0].TOI='99:99';assert.equal(parseOfficialPlayers(badTime,officialSchedule).players[0].seconds,null);
+const absentBlocks=officialFixture();delete absentBlocks.stats.homeTeamValue[0].BkS;assert.equal(parseOfficialPlayers(absentBlocks,officialSchedule).players[0].blocks,null);
+const dup=officialFixture();dup.stats.homeTeamValue[1].info.playerId=100;assert.throws(()=>parseOfficialPlayers(dup,officialSchedule));
+const og={...fg,officialPlayers:official,shots:[{...shot,player:'Old spelling',playerId:'100',attackingSkaters:['Home 0'],attackingSkaterIds:['100'],assists:{first:null,second:null}}, {...shot,id:'second spelling',outcome:'saved',player:'Alternate spelling',playerId:'100'}]};
+const orows=playerMatchStats(og);assert.equal(orows.filter(p=>p.id==='100').length,1);assert.equal(orows.find(p=>p.id==='100').attempts,2);assert.equal(orows.find(p=>p.id==='100').seconds,934);assert.equal(orows.find(p=>p.id==='100').name,'Home 0');assert.equal(orows.some(p=>p.name==='Home 9'),false);
+const ol=leaguePlayerStats([og,{...og,id:'official second'}]);assert.equal(ol.find(p=>p.id==='100').seconds,1868);assert.equal(ol.find(p=>p.id==='100').officialGames,2);
+assert.equal(leaguePlayerStats([og,{...og,id:'missing',officialPlayers:undefined}]).find(p=>p.id==='100').seconds,null);
+assert.equal(leaguePlayerStats([og,{...og,id:'away fixture',home:'A',away:'H'}],'all','home').find(p=>p.team==='H'&&p.id==='100').seconds,934);
+if(actual?.officialPlayers){const hudon=playerMatchStats(actual).find(p=>p.name==='Charles Hudon');assert.equal(hudon.seconds,934);assert.equal(hudon.position,'F');assert.equal(hudon.blockedShots,0);}
+console.log('PASS official player metadata: result validation, time format, missing fields, stable IDs, roster, selection and aggregation.');
