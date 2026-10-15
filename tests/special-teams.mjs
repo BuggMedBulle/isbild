@@ -8,6 +8,8 @@ const rows=parseSpecialTeams(fixture.pp,fixture.pk,fixtureGames);validateLeague(
 const dif=rows.find(r=>r.team==='Djurgårdens IF');assert.equal(dif.ppGoals,4);assert.equal(dif.ppChances,16);assert.equal(dif.ppShots,27);assert.equal(dif.ppSeconds,1639);assert.equal(dif.pkShotsAgainst,34);assert.equal(efficiency(dif.ppGoals,dif.ppChances),25);assert.equal(100-efficiency(dif.pkAgainst,dif.pkChances),75);
 assert.equal(efficiency(0,0),null);assert.equal(per60(2,0),null);assert.equal(per60(2,120),60);assert.equal(seconds('125:09'),7509);assert.throws(()=>seconds('10:60'));
 let bad=structuredClone(fixture.pp);bad[0].stats.pop();assert.throws(()=>parseSpecialTeams(bad,fixture.pk,fixtureGames));
+assert.equal(seconds('1:04:03'),3843);assert.equal(seconds('2:05:09'),seconds('125:09'));
+for(const invalid of ['1:60:00','1:04:60','1:4:03','1:04:03:00','',null])assert.throws(()=>seconds(invalid));
 bad=structuredClone(fixture.pp);bad[0].stats[0].PPPerc='99';assert.throws(()=>parseSpecialTeams(bad,fixture.pk,fixtureGames));
 assert.throws(()=>parseSpecialTeams(fixture.pp,fixture.pk,fixtureGames,'5','home'));
 let mismatch=structuredClone(rows);mismatch[0].pkShotsAgainst++;assert.throws(()=>validateLeague(mismatch));
