@@ -16,6 +16,11 @@ on:
     # After match nights in both leagues, in Swedish local time including DST.
     - cron: '0 22 * * *'
       timezone: 'Europe/Stockholm'
+    # Extra opportunities if the primary scheduled event is delayed or a source is unavailable.
+    - cron: '17,37 22 * * *'
+      timezone: 'Europe/Stockholm'
+    - cron: '17 23 * * *'
+      timezone: 'Europe/Stockholm'
     # Daily fallback for late games, rescheduled games and source updates.
     - cron: '23 0 * * *'
       timezone: 'Europe/Stockholm'
@@ -57,7 +62,12 @@ jobs:
         run: pnpm sync:shl
       - name: Refresh Hockeyallsvenskan snapshot
         if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.refresh_data || inputs.retrain_model))
-        run: pnpm sync:ha
+        run: |
+          if ! pnpm sync:ha; then
+            git restore --source=HEAD -- data/ha-2026.json public/data/ha-2026.json
+            echo '::warning::Hockeyallsvenskan refresh failed; keeping its previous verified snapshot and continuing SHL publication.'
+            echo 'Hockeyallsvenskan could not be refreshed. Its previous verified snapshot was retained; SHL publication continues.' >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Refresh official powerplay and boxplay
         if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && (inputs.refresh_data || inputs.retrain_model))
         run: pnpm sync:special-teams
