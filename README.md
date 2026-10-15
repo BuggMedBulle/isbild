@@ -213,3 +213,37 @@ Liga väljs med SHL/Hockeyallsvenskan-växlaren. `liga=ha` ingår i delade länk
 HA:s nuvarande publika `play-by-play` innehåller skott, mål, assist och målvaktsbyten men **inga skottpositioner**. Därför beräknas inte xG, GSAx, skottkartor, xG-tabell eller offensivt bidrag för HA. Saknade värden visas som — och förklaras i gränssnittet. Säsongsstatistiken följer ligans officiella urval inklusive förlängning. Spelar- och målvaktsstatistik per match använder ett separat verifierat urval: ordinarie tid med båda målvakterna på isen. Saknad målvaktsidentitet gör matchstatistiken otillgänglig.
 
 GitHub Actions uppdaterar båda ligorna varje kväll kl. 22:00 svensk tid, med nattlig kontroll kl. 00:23. Den dagliga kvällskörningen täcker även Hockeyallsvenskans andra matchdagar. Inga betalda tjänster krävs.
+
+
+## Inför omgången – SHL
+
+`vy=preview` visar alla matcher på valt speldatum och lyfter det valda lagets match
+utan att dubblera den i kortlistan. `datum=YYYY-MM-DD` och
+`grundprofil=all|5|10` bevarar previewns datum och urval i delade länkar.
+Omgång betyder här spelkväll, inte formellt omgångsnummer. Dagens nästa spelkväll
+väljs automatiskt; användaren kan även se tidigare och senare datum. Om valt lag
+inte spelar visas dess nästa schemalagda match med en genväg till rätt datum.
+
+SHL-synken verifierar och sparar hela spelschemat i `schedule.version: 1` i den
+befintliga matchsnapshoten och dess publika kopia. Schemat uppdateras även när
+matchdata inte ändrats. Starttider utgår från tidszonsmärkt UTC och jämförs med
+SHL:s lokala tid i Europe/Stockholm, inklusive vinter-/sommartid. Kända live-
+statusar visas men ingen liveuppdatering av matchhändelser påstås.
+
+Previewn använder enbart matcher från rätt säsong med datum strikt före vald
+speldag. Inga resultat eller skott från previewdatumet eller senare får ingå.
+xGF/xGA, mål, skotteffektivitet och verifierade målvaktsvärden avser samma
+regleringsurval utan tom målbur. GSAx/räddningsprocent visas för alla lagets
+använda målvakter, inte som prognos för en namngiven startmålvakt. Form visar de
+senaste fem matcherna; hemma-/bortaprofilen hela tidigare säsongen. Special Teams
+använder bara en säsongssnapshot med `through` strikt före previewdatumet och
+redovisar ligans separata urval. Nyare special teams-siffror döljs i äldre previews.
+
+Rubriker och tre bevakningspunkter genereras lokalt från dokumenterade regler,
+utan betalt AI-API. Matchprofil kräver minst tre matcher per lag. Låg xGA är <90 %
+av ligasnittet, högt xGF >108 %, och lagens xGF jämförs från >15 % skillnad.
+Det är beskrivande trösklar, inte säkerhetstest eller en validerad vinstprognos.
+Skador, laguppställningar, startmålvakter och exakta resultat prognostiseras inte.
+Hockeyallsvenskan har ännu ingen preview; fliken visas bara när SHL är vald.
+`tests/preview.mjs` verifierar bland annat cutoff utan framtidsläckage, saknad data,
+periodurval, PP/BP-datum, schemavalidering och svensk tidszon vid DST-byte.
