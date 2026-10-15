@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict';
+import {buildMatchPreview,defaultPreviewDay,nextTeamFixture,parseSchedule,stockholmDay} from '../lib/preview.ts';
+
+const fixture={id:'shl-preview',home:'Brynäs IF',away:'Djurgårdens IF',season:'2026/27',date:'2026-10-15',time:'19:00',startAt:'2026-10-15T17:00:00.000Z',state:'scheduled',venue:'Arena'};
+const schedule={version:1,season:fixture.season,updatedAt:'2026-10-15T00:00:00Z',source:'test',games:[{...fixture,id:'done',date:'2026-10-13',state:'finished'},fixture,{...fixture,id:'other',date:'2026-10-17',home:'Rögle BK',away:'Brynäs IF'}]};
+assert.equal(stockholmDay(new Date('2026-10-14T22:30:00Z')),'2026-10-15');
+assert.equal(defaultPreviewDay(schedule,new Date('2026-10-15T10:00:00Z')),'2026-10-15');
+assert.equal(nextTeamFixture(schedule,'Djurgårdens IF',new Date('2026-10-15T10:00:00Z')).id,fixture.id);
+assert.equal(nextTeamFixture(schedule,'HV71',new Date('2026-10-15T10:00:00Z')),null);
+assert.equal(defaultPreviewDay({...schedule,games:schedule.games.map(g=>({...g,state:'finished'}))},new Date('2026-10-15T10:00:00Z')),null);
+const game=(id,date,xgf=2,xga=3)=>({id,date,season:'2026/27',home:fixture.home,away:fixture.away,stats:{all:{gf:1,ga:2,xgf,xga,cf:30,ca:40,sog:20,soga:25}},shots:[]});
+const history=Array.from({length:7},(_,i)=>game('past'+i,`2026-10-${String(i+1).padStart(2,'0')}`,i+1,2));
+const before=buildMatchPreview(history,fixture);
+const after=buildMatchPreview([...history,game('same day','2026-10-15',1000,1000),game('future','2026-10-17',1000,1000),{...game('old season','2026-10-01',1000,1000),season:'2025/26'}],fixture);
+assert.deepEqual(after,before); // An archived preview must never learn from its own game or later results.
+assert.equal(before.home.n,7);assert.equal(before.home.xgf,4);assert.equal(before.away.xga,4);
+assert.equal(before.home.gsax,null);assert.equal(before.home.savePercentage,null);
+assert.equal(before.home.form.n,5);assert.equal(before.home.form.xgf,5);
+assert.equal(buildMatchPreview(history,fixture,'5').home.xgf,5);
+assert.equal(buildMatchPreview([],fixture).home.xgf,null);
+assert.equal(buildMatchPreview([],fixture).leagueMean,null);
+assert.equal(buildMatchPreview([],fixture).enough,false);
+const special={season:'2026/27',through:'2026-10-14',windows:{'all/all':{rows:[{team:fixture.home,ppGoals:2,ppChances:10,pkAgainst:1,pkChances:10}]}}};
+assert.equal(buildMatchPreview(history,fixture,'all',special).home.pp,20);
+assert.equal(buildMatchPreview(history,fixture,'all',special).home.bp,90);
+assert.equal(buildMatchPreview(history,fixture,'all',{...special,through:'2026-10-15'}).home.pp,null);
+assert.equal(buildMatchPreview(history,fixture,'all',{...special,season:'2025/26'}).home.pp,null);
+assert.equal(buildMatchPreview(history,fixture,'all',{...special,windows:{'all/all':{rows:[{team:fixture.home,ppGoals:0,ppChances:0,pkAgainst:0,pkChances:0}]}}}).home.bp,null);
+const raw={gameInfo:Array.from({length:300},(_,i)=>({uuid:'g'+i,rawStartDateTime:'2026-10-15T17:00:00.000Z',startDateTime:'2026-10-15 19:00:00',state:'pre-game',homeTeamInfo:{code:'BIF'},awayTeamInfo:{code:'DIF'},venueInfo:{name:'Arena'}}))};
+const parsed=parseSchedule(raw);assert.equal(parsed.games.length,300);assert.equal(parsed.games[0].time,'19:00');assert.equal(parsed.games[0].away,fixture.away);
+assert.throws(()=>parseSchedule({gameInfo:raw.gameInfo.slice(0,1)}));
+assert.throws(()=>parseSchedule({gameInfo:[...raw.gameInfo.slice(1),raw.gameInfo[1]]}));
+assert.throws(()=>parseSchedule({gameInfo:raw.gameInfo.map((g,i)=>i?g:{...g,rawStartDateTime:'2026-10-15T19:00:00.000Z'})}));
+const winter=parseSchedule({gameInfo:raw.gameInfo.map(g=>({...g,rawStartDateTime:'2026-11-15T18:00:00.000Z',startDateTime:'2026-11-15 19:00:00'}))});assert.equal(winter.games[0].time,'19:00');
+console.log('PASS round preview: Swedish time/DST, next match, historical cutoff, matched denominators, form, missing goalies, PP/BP cutoff and schedule validation.');
