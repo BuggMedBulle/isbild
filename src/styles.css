@@ -150,12 +150,12 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 .score-explanation{display:flex;align-items:flex-start;gap:12px;background:var(--surface-warm,#fff9ed);border:1px solid var(--outline,#eadebf);border-radius:9px;padding:18px 23px;margin:0 0 22px;color:var(--ink-warm,#a28548)}.score-explanation>svg{flex-shrink:0;margin-top:2px}.score-explanation h3{font-size:15px;color:var(--ink-warm,#8c7040);margin-bottom:7px}.score-explanation p{font-size:12px;color:var(--ink-warm,#9c865d);line-height:1.7}.score-explanation strong{font-weight:700}.score-explanation .excluded-goal{display:flex;gap:8px;align-items:center;margin-top:9px;font-size:11px}@media(max-width:760px){.score-explanation{padding:16px;gap:9px}.score-explanation p{font-size:11px}.score-explanation .excluded-goal{font-size:10px}}
 .league-view-tabs{margin:0 0 23px;gap:0!important}.league-view-tabs [data-slot=tabs-list]{background:var(--surface-raised,#e5edf0);height:41px;padding:4px;gap:4px}.league-view-tabs [data-slot=tabs-trigger]{font-size:12px;padding:7px 22px}.league-view-tabs [data-state=active]{background:var(--surface,white)!important;color:var(--ink-accent)!important}.xg-table-intro{max-width:780px;margin:0 0 24px}.xg-table-intro h2{font-size:29px;margin-bottom:13px}.xg-table-intro p{font-size:13px;color:var(--ink-secondary,#738d9a);line-height:1.75}.xg-table-context{font-size:10px;color:var(--ink-muted,#8a9fab);margin-top:16px}.xg-position-story{display:flex;gap:16px;align-items:center;padding:22px 25px;background:var(--surface-accent);border:1px solid var(--outline,#d4e5df);border-radius:9px;margin-bottom:22px}.xg-position-story h3{font-size:18px}.xg-position-story p{font-size:12px;color:var(--ink-secondary,#718e99);margin-top:6px}.xg-point-diff{margin-left:auto;text-align:right;white-space:nowrap}.xg-point-diff strong{font-size:30px;font-variant-numeric:tabular-nums;letter-spacing:-.8px;color:var(--ink-accent);display:block}.xg-point-diff span{font-size:10px;color:var(--ink-muted,#819a9f)}.xg-points{font-size:16px!important;font-weight:730;color:var(--ink-accent)!important;font-variant-numeric:tabular-nums}.position-change{font-size:11px;color:var(--ink-secondary,#6f8997);display:inline-flex;align-items:center;gap:3px;white-space:nowrap}.position-change small{font-size:9px;color:var(--ink-muted,#98aeb8);margin-left:3px}.xg-table [data-slot=table-cell]{font-size:12px}.xg-table .league-team{font-size:12px;white-space:nowrap}@media(max-width:760px){.xg-table-intro h2{font-size:26px}.xg-table-intro p{font-size:12px}.xg-table-context{font-size:9px;line-height:1.7}.xg-position-story{gap:11px;padding:18px 16px;align-items:flex-start;flex-wrap:wrap}.xg-position-story>.club-logo{height:36px!important;width:36px!important}.xg-position-story>div:nth-child(2){flex:1}.xg-position-story h3{font-size:16px}.xg-position-story p{font-size:11px}.xg-point-diff{width:100%;text-align:left;padding-left:47px}.xg-point-diff strong{display:inline;margin-right:8px;font-size:24px}.xg-table [data-slot=table-cell]{font-size:11px;padding:12px}.xg-table .league-team{font-size:11px;gap:8px}.league-view-tabs [data-slot=tabs-trigger]{font-size:11px}.xg-table .xg-points{font-size:14px!important}}
 
-/* Dark palette keeps light-theme fallbacks and original club emblem colors. */
+/* Permanent dark palette preserves original club emblem colors. */
 @custom-variant dark (&:where(.dark, .dark *));
 html.dark{color-scheme:dark;--canvas:#141414;--surface:#1e1e1e;--surface-raised:#292929;--surface-accent:#262626;--surface-warm:#382f21;--surface-danger:#3b2528;--outline:#3c3c3c;--ink-strong:#eeeeee;--ink-secondary:#c6c6c6;--ink-muted:#aaaaaa;--ink-accent:#79c7fa;--ink-warm:#e6be7e;--ink-danger:#ffb0a0;--plot-own:#79c7fa;--plot-actual:#b7b7b7;--background:#141414;--foreground:#eeeeee;--card:#1e1e1e;--card-foreground:#eeeeee;--popover:#292929;--popover-foreground:#eeeeee;--primary:#79c7fa;--primary-hover:#a6ddff;--primary-foreground:#151515;--secondary:#292929;--secondary-foreground:#eeeeee;--muted:#292929;--muted-foreground:#b5b5b5;--accent:#333333;--accent-foreground:#eeeeee;--border:#3c3c3c;--input:#3c3c3c;--ring:#79c7fa;--destructive:#ffb0a0}
 html.dark .topbar{background:#191919;border-bottom:1px solid var(--outline)}
-.theme-toggle{width:38px;height:38px;display:grid;place-items:center;border:1px solid #426673;border-radius:7px;color:#c7dbe5;background:transparent;flex-shrink:0}
-.theme-toggle:hover{background:#21434f;color:white}
+
+
 html.dark .button.primary{color:#151515}
 html.dark .recharts-cartesian-grid line{stroke:#3c3c3c}
 html.dark .recharts-text{fill:#b5b5b5}
@@ -170,10 +170,10 @@ html.dark .emblem-disc{background:#eeeeee}
 html.dark .recharts-line-curve[stroke="#347fac"]{stroke:var(--plot-own)}
 html.dark .recharts-line-curve[stroke="#bc7140"]{stroke:#d89460}
 html.dark .recharts-line-dots circle[stroke="#347fac"]{stroke:var(--plot-own);fill:var(--plot-own)}
-@media(max-width:760px){.header-right{gap:9px}.theme-toggle{width:34px;height:34px}}
+@media(max-width:760px){.header-right{gap:9px}}
 
-html.dark .theme-toggle{border-color:var(--outline);color:var(--ink-secondary)}
-html.dark .theme-toggle:hover{background:var(--surface-raised);color:var(--ink-strong)}
+
+
 
 .trend-tooltip{max-width:320px;padding:14px 16px;background:var(--surface-raised,#fff);color:var(--ink-strong,#24404f);border:1px solid var(--outline,#dce5eb);border-radius:10px;box-shadow:0 4px 18px #0002;font-size:12px;line-height:1.6}.trend-tooltip>div{margin:3px 0 8px}.trend-tooltip small{display:block;color:var(--ink-muted,#738d9a);max-width:230px}.trend-tooltip p{margin-top:5px}.trend-for{color:var(--ink-accent)}.trend-against{color:var(--ink-warm,#bc7140)}
 
