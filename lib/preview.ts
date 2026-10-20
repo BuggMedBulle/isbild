@@ -51,6 +51,36 @@ export function buildMatchPreview(games:Game[],fixture:Fixture,range='all',speci
   else if(away.xgf!>home.xgf!*1.15){title=`${fixture.away}s chansskapande i fokus`;summary=`Gästerna har skapat ${f(away.xgf!)} xGF per match, mot ${f(home.xgf!)} för hemmalaget. Hur ${fixture.home} begränsar chanserna är en del att följa.`;}
   else {title='Liknande nivå i chansskapandet';summary=`Lagen har skapat ${f(home.xgf!)} respektive ${f(away.xgf!)} xGF per match. Skillnader i defensiv, utdelning och special teams ger mer sammanhang.`;}
  }
- return {fixture,home,away,title,summary,enough,leagueMean,through:history.map(g=>g.date).sort().at(-1)??null,specialThrough:special&&special.through<fixture.date?special.through:null};
+ return {fixture,home,away,title,summary,enough,prediction:predictMatch(home,away,leagueMean),leagueMean,through:history.map(g=>g.date).sort().at(-1)??null,specialThrough:special&&special.through<fixture.date?special.through:null};
 }
 export type MatchPreview=ReturnType<typeof buildMatchPreview>;
+
+
+// A transparent first baseline, not fitted or calibrated probabilities.
+// Five league-average pseudo-games regularize both attack and defence.
+type PredictionProfile={n:number;xgf:number|null;xga:number|null};
+export function predictMatch(home:PredictionProfile,away:PredictionProfile,leagueMean:number|null){
+ if(leagueMean===null||!Number.isFinite(leagueMean)||leagueMean<=0||home.n<3||away.n<3)return null;
+ const valid=(p:PredictionProfile)=>Number.isFinite(p.n)&&[p.xgf,p.xga].every(v=>v!==null&&Number.isFinite(v)&&v>=0);
+ if(!valid(home)||!valid(away))return null;
+ const shrink=(v:number,n:number)=>(v*n+5*leagueMean)/(n+5);
+ const homeXg=shrink(home.xgf!,home.n)*shrink(away.xga!,away.n)/leagueMean;
+ const awayXg=shrink(away.xgf!,away.n)*shrink(home.xga!,home.n)/leagueMean;
+ if(!Number.isFinite(homeXg+awayXg)||Math.max(homeXg,awayXg)>30)return null;
+ const poisson=(mean:number)=>{
+  const probabilities=[Math.exp(-mean)];
+  const limit=Math.ceil(mean+12*Math.sqrt(mean)+20);
+  for(let k=1;k<=limit;k++)probabilities.push(probabilities[k-1]*mean/k);
+  return probabilities;
+ };
+ const hp=poisson(homeXg),ap=poisson(awayXg);let h=0,d=0,a=0;
+ for(let i=0;i<hp.length;i++)for(let j=0;j<ap.length;j++){
+  const probability=hp[i]*ap[j];if(i>j)h+=probability;else if(i===j)d+=probability;else a+=probability;
+ }
+ const total=h+d+a,probabilities=[h/total,d/total,a/total];
+ // Largest remainders keep displayed whole percentages summing to exactly 100.
+ const percentages=probabilities.map(v=>Math.floor(v*100));
+ const order=probabilities.map((v,i)=>({i,remainder:v*100-percentages[i]})).sort((a,b)=>b.remainder-a.remainder);
+ for(let i=0,remaining=100-percentages.reduce((s,v)=>s+v,0);i<remaining;i++)percentages[order[i].i]++;
+ return {homeXg,awayXg,homeShare:homeXg/(homeXg+awayXg)*100,probabilities,percentages};
+}
