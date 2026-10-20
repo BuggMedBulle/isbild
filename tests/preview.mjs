@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {buildMatchPreview,defaultPreviewDay,nextTeamFixture,parseSchedule,stockholmDay} from '../lib/preview.ts';
+import {predictMatch,buildMatchPreview,defaultPreviewDay,nextTeamFixture,parseSchedule,stockholmDay} from '../lib/preview.ts';
 
 const fixture={id:'shl-preview',home:'Brynäs IF',away:'Djurgårdens IF',season:'2026/27',date:'2026-10-15',time:'19:00',startAt:'2026-10-15T17:00:00.000Z',state:'scheduled',venue:'Arena'};
 const schedule={version:1,season:fixture.season,updatedAt:'2026-10-15T00:00:00Z',source:'test',games:[{...fixture,id:'done',date:'2026-10-13',state:'finished'},fixture,{...fixture,id:'other',date:'2026-10-17',home:'Rögle BK',away:'Brynäs IF'}]};
@@ -33,3 +33,24 @@ assert.throws(()=>parseSchedule({gameInfo:[...raw.gameInfo.slice(1),raw.gameInfo
 assert.throws(()=>parseSchedule({gameInfo:raw.gameInfo.map((g,i)=>i?g:{...g,rawStartDateTime:'2026-10-15T19:00:00.000Z'})}));
 const winter=parseSchedule({gameInfo:raw.gameInfo.map(g=>({...g,rawStartDateTime:'2026-11-15T18:00:00.000Z',startDateTime:'2026-11-15 19:00:00'}))});assert.equal(winter.games[0].time,'19:00');
 console.log('PASS round preview: Swedish time/DST, next match, historical cutoff, matched denominators, form, missing goalies, PP/BP cutoff and schedule validation.');
+
+const balanced={n:10,xgf:2.5,xga:2.5};
+const equal=predictMatch(balanced,balanced,2.5);
+assert.equal(equal.homeXg,2.5);assert.equal(equal.awayXg,2.5);
+assert.ok(Math.abs(equal.probabilities[0]-equal.probabilities[2])<1e-12);
+assert.ok(Math.abs(equal.probabilities.reduce((s,p)=>s+p,0)-1)<1e-12);
+assert.equal(equal.percentages.reduce((s,p)=>s+p,0),100);
+assert.ok(Math.abs(equal.probabilities[1]-.1835408126)<1e-8); // Independent Poisson(2.5) tie benchmark.
+const strong={n:10,xgf:3.5,xga:1.5};
+const favored=predictMatch(strong,balanced,2.5),swapped=predictMatch(balanced,strong,2.5);
+assert.ok(favored.homeXg>favored.awayXg);assert.ok(favored.probabilities[0]>favored.probabilities[2]);
+assert.ok(Math.abs(favored.probabilities[0]-swapped.probabilities[2])<1e-12);
+assert.equal(favored.homeXg,swapped.awayXg);
+assert.ok(predictMatch({...strong,n:3},balanced,2.5).homeXg<favored.homeXg);
+assert.ok(predictMatch(strong,{...balanced,xga:4},2.5).homeXg>favored.homeXg);
+for(const invalid of [null,0,NaN,Infinity,-1])assert.equal(predictMatch(balanced,balanced,invalid),null);
+for(const invalid of [{...balanced,n:2},{...balanced,xgf:null},{...balanced,xga:NaN},{...balanced,xga:-1}])assert.equal(predictMatch(invalid,balanced,2.5),null);
+assert.equal(buildMatchPreview([],fixture).prediction,null);
+assert.ok(before.prediction);assert.deepEqual(after.prediction,before.prediction);
+assert.notEqual(buildMatchPreview(history,fixture,'5').prediction.homeXg,before.prediction.homeXg);
+console.log('PASS prediction: known Poisson probability, symmetry, normalization, sample shrinkage, defensive matchup, missing data and no future leakage.');
