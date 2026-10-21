@@ -280,3 +280,9 @@ input,select,textarea{font-family:inherit}
 .preview-share-track span{border-right:2px solid #20272c;box-sizing:border-box}
 .preview-outcomes>div{border-top:3px solid var(--team-accent)}
 .preview-outcomes strong{color:var(--team-accent)}
+
+/* Exact brand colours stay in graphics; labels remain readable in dark mode. */
+.preview-profile-name strong,.preview-expected-grid>div>strong,.preview-expected-value,.preview-outcomes strong{color:#EEEEEE}
+.preview-share-labels>span,.preview-mini-prediction strong>span{color:#EEEEEE!important}
+.preview-metric-track>span{outline:1px solid #A0A0A0;outline-offset:0}
+.preview-share-track{outline:1px solid #A0A0A0}
