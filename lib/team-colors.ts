@@ -3,7 +3,7 @@
 export const teamAccents:Record<string,readonly string[]>={
  'Björklöven':['#016243','#F0D200'],
  'Brynäs IF':['#FFD121','#000000','#ED1C24'],
- 'Djurgårdens IF':['#002554','#E21F26','#FFEC0D'],
+ 'Djurgårdens IF':['#0568AF','#E21F26','#FFEC0D'],
  'Frölunda HC':['#CE0014','#00573F'],
  'Färjestad BK':['#009B5E','#FFD121'],
  'HV71':['#FCD213','#0C2950'],
