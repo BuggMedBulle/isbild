@@ -27,9 +27,9 @@ export function matchWatchPoints(p:MatchPreview):Insight[]{
    add(`goalies-${a.team}`,'conversion',1.5+Math.abs(rate),rate>0?`${a.team}s målvakter har hållit nere målutfallet`:`${a.team} har släppt in mer än xG antyder`,`${signed(a.gsax)} GSAx på ${a.n} matcher (${signed(rate)} per match). Nu väntar ${b.team}, som skapar ${f(b.xgf!)} xGF per match. Värdet gäller samtliga använda målvakter; startmålvakten är inte bekräftad.`,pairN);
   }
   // Avoid calling the same last-five sample a form change; need a broader profile.
-  if(a.n>=10&&a.form.n===5&&valid(a.xgf,a.xga,a.form.xgf,a.form.xga)){
-   const base=a.xgf!-a.xga!,recent=a.form.xgf!-a.form.xga!,delta=recent-base;
-   if(Math.abs(delta)>=.40)add(`form-${a.team}`,'form',1.3+Math.abs(delta),delta>0?`${a.team}s senaste chansbild är starkare`:`${a.team}s senaste chansbild är svagare`,`${a.team}s senaste fem matcher ger ${f(a.form.xgf!)} xGF och ${f(a.form.xga!)} xGA per match: ${signed(recent)} i xG-skillnad, mot ${signed(base)} i grundprofilens ${a.n} matcher. Följ om den bilden håller mot ${b.team}. Urvalen överlappar; motståndet är inte justerat.`,a.n);
+  if(a.previousForm?.n===5&&a.form.n===5&&valid(a.previousForm.xgf,a.previousForm.xga,a.form.xgf,a.form.xga)){
+   const base=a.previousForm.xgf!-a.previousForm.xga!,recent=a.form.xgf!-a.form.xga!,delta=recent-base;
+   if(Math.abs(delta)>=.40)add(`form-${a.team}`,'form',1.3+Math.abs(delta),delta>0?`${a.team}s senaste chansbild är starkare`:`${a.team}s senaste chansbild är svagare`,`${a.team}s senaste fem matcher ger ${f(a.form.xgf!)} xGF och ${f(a.form.xga!)} xGA per match: ${signed(recent)} i xG-skillnad, mot ${signed(base)} i föregående fem matcher. Följ om den bilden håller mot ${b.team}. Perioderna överlappar inte; motståndet är inte justerat.`,a.n);
   }
   if(p.specialThrough&&a.ppChances!==null&&b.bpChances!==null&&a.ppChances>=15&&b.bpChances>=15&&valid(a.pp,b.bp)){
    const strong=a.pp!>=25,weak=b.bp!<=75,stout=b.bp!>=85;
@@ -44,3 +44,5 @@ export function matchWatchPoints(p:MatchPreview):Insight[]{
  const topics=new Set<string>();
  return points.sort((a,b)=>b.score-a.score||a.id.localeCompare(b.id)).filter(point=>{if(topics.has(point.topic))return false;topics.add(point.topic);return true;}).slice(0,3);
 }
+
+export function previewStory(p:MatchPreview){const first=matchWatchPoints(p)[0];return first?{title:first.title,text:first.text}:{title:p.title,text:p.summary};}
