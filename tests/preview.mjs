@@ -56,7 +56,7 @@ assert.notEqual(buildMatchPreview(history,fixture,'5').prediction.homeXg,before.
 console.log('PASS prediction: known Poisson probability, symmetry, normalization, sample shrinkage, defensive matchup, missing data and no future leakage.');
 
 const {matchWatchPoints}=await import('../lib/preview-insights.ts');
-const neutralProfile=team=>({team,n:12,xgf:2.5,xga:2.5,gf:2.5,ga:2.5,gsax:null,form:{n:5,xgf:2.5,xga:2.5},pp:null,bp:null,ppChances:null,bpChances:null});
+const neutralProfile=team=>({team,n:12,xgf:2.5,xga:2.5,gf:2.5,ga:2.5,gsax:null,previousForm:{n:5,xgf:2.5,xga:2.5},form:{n:5,xgf:2.5,xga:2.5},pp:null,bp:null,ppChances:null,bpChances:null});
 const neutral={enough:true,leagueMean:2.5,home:neutralProfile('Brynäs IF'),away:neutralProfile('Djurgårdens IF'),specialThrough:null};
 assert.deepEqual(matchWatchPoints(neutral),[]);
 assert.deepEqual(matchWatchPoints({...neutral,enough:false}),[]);
@@ -67,7 +67,7 @@ assert.equal(new Set(insights.map(i=>i.topic)).size,insights.length);
 assert.ok(insights.some(i=>i.id==='finishing-Brynäs IF'&&i.title.includes('målvaktsspel')));
 assert.ok(insights.some(i=>i.id==='clash-Brynäs IF'));
 assert.deepEqual(matchWatchPoints({...duel,home:duel.away,away:duel.home}),insights);
-assert.ok(!matchWatchPoints({...duel,home:{...duel.home,n:5}}).some(i=>i.id==='form-Brynäs IF'));
+assert.ok(!matchWatchPoints({...duel,home:{...duel.home,previousForm:{n:0,xgf:null,xga:null}}}).some(i=>i.id==='form-Brynäs IF'));
 const pp={...neutral,specialThrough:'2026-10-14',home:{...neutral.home,pp:30,ppChances:25},away:{...neutral.away,bp:70,bpChances:25}};
 assert.equal(matchWatchPoints(pp)[0].topic,'special');
 assert.deepEqual(matchWatchPoints({...pp,specialThrough:null}),[]);
@@ -75,3 +75,15 @@ assert.deepEqual(matchWatchPoints({...pp,home:{...pp.home,ppChances:5}}),[]);
 assert.deepEqual(matchWatchPoints(before),matchWatchPoints(after));
 assert.ok(!JSON.stringify(insights).includes('NaN'));
 console.log('PASS watch points: meaningful variation, opposing directions, topic deduplication, sample limits, neutral fallback and historical cutoff.');
+
+const {previewStory}=await import('../lib/preview-insights.ts');
+assert.equal(previewStory(duel).title,insights[0].title);
+assert.equal(previewStory({...neutral,title:'Neutral',summary:'Saknar signal'}).title,'Neutral');
+const {evaluatePredictions}=await import('../lib/prediction-evaluation.ts');
+assert.equal(evaluatePredictions([]).n,0);
+const evaluated=evaluatePredictions(history);
+assert(evaluated.n>0);
+assert(evaluated.rows.every(r=>r.brier>=0&&r.brier<=2));
+const changed=history.map((g,i)=>i===history.length-1?{...g,stats:{all:{...g.stats.all,gf:20,ga:0}}}:g);
+assert.deepEqual(evaluatePredictions(changed).rows.map(r=>r.probabilities),evaluated.rows.map(r=>r.probabilities));
+console.log('PASS coherent preview headlines and rolling evaluation, empty history, bounded Brier and no outcome leakage.');

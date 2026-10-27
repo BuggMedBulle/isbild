@@ -5,16 +5,16 @@ const vx=snapshot.games.find(g=>g.id==='shl-hmglqamkzf');assert.equal(vx.resultH
 
 // Distinguish chance creation, finishing and verified keeper outcomes, including offsetting effects.
 const sample=(gf,ga,xgf,xga,n=6)=>({gf,ga,xgf,xga,n,share:50,goalShare:50,corsi:null});
-const boosted=performance(sample(15,7,15,15),{gsax:8,complete:true});assert(boosted.title.includes('Målvakter'));assert.equal(boosted.offense.title,'Utdelning nära xG');assert.equal(boosted.verifiedGoalies,true);assert(boosted.defense.text.includes('samma observation'));
-assert(performance(sample(22,7,22,15),{gsax:8,complete:true}).title.includes('Chansövertag förstärks'));
+const boosted=performance(sample(15,7,15,15),{gsax:8,complete:true});assert(boosted.title.startsWith('Jämn chansbild – färre insläppta'));assert.equal(boosted.offense.title,'Utdelning nära xG');assert.equal(boosted.verifiedGoalies,true);assert(boosted.defense.text.includes('samma observation'));
+assert(performance(sample(22,7,22,15),{gsax:8,complete:true}).title.startsWith('Chansövertag –'));
 assert(performance(sample(18,7,18,15),{gsax:4,complete:true}).verifiedGoalies===false);
 assert(performance(sample(18,7,18,15),{gsax:8,complete:false}).verifiedGoalies===false);
 assert(performance(sample(18,7,18,15)).defense.text.includes('saknas'));
-const offset=performance(sample(10,10,18,18),{gsax:8,complete:true});assert(offset.title.includes('Svag offensiv'));assert.equal(offset.offense.value,-8);assert.equal(offset.defense.value,8);
-assert(performance(sample(24,22,18,15),{gsax:-7,complete:true}).title.includes('Stark offensiv'));
-assert(performance(sample(8,18,18,12),{gsax:-6,complete:true}).title.includes('Svag utdelning både'));
+const offset=performance(sample(10,10,18,18),{gsax:8,complete:true});assert(offset.title.startsWith('Jämn chansbild – svag utdelning framåt'));assert.equal(offset.offense.value,-8);assert.equal(offset.defense.value,8);
+assert(performance(sample(24,22,18,15),{gsax:-7,complete:true}).title.includes('stark utdelning framåt'));
+assert(performance(sample(8,18,18,12),{gsax:-6,complete:true}).title.includes('svagt målutfall i båda riktningarna'));
 assert(performance(sample(18,17,18,18,1),{gsax:1,complete:true}).note.includes('Litet urval'));
-assert(performance(sample(18,17,18,18,20),{gsax:1,complete:true}).title.includes('jämn'));
+assert(performance(sample(18,17,18,18,20),{gsax:1,complete:true}).title.startsWith('Jämn chansbild'));
 assert.equal(performance(sample(0,0,0,0,0)).title,'Analysunderlag saknas');
 const fbk=teamGames(snapshot.games,'Färjestad BK','all','all');const fbkStats=aggregate(fbk,'Färjestad BK','all');console.log('Färjestad analysis:',performance(fbkStats,{gsax:fbkStats.xga-fbkStats.ga,complete:true}).title);console.log('PASS: nuanced team assessments, offsetting offense/defense, matched goalkeeper coverage, missing data and small samples.');
 
